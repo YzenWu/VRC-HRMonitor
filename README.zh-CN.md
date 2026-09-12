@@ -24,6 +24,8 @@
 - 自定义 OSC 发送（任意地址/文本）、Webhook 出站推送、OSC 接收（9001 端口）捕获 VRChat Avatar 参数流量、可选「启动即推送」。
 
 <img src="images/pusher.png" alt="推送预览">
+<img src="images/hwinfo.png" alt="硬件信息">
+
 
 ### 悬浮窗
 

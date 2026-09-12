@@ -26,6 +26,7 @@ Real-time BLE heart rate for VRChat: push BPM and hardware telemetry to the Chat
 - Custom OSC send (any address/text), Webhook outbound push, OSC receiver (port 9001) to capture VRChat avatar parameter traffic, and optional "start pushing on launch".
 
 <img src="images/pusher.png" alt="Pusher">
+<img src="images/hwinfo.png" alt="Hardware info">
 
 ### Floating windows (Overlay)
 

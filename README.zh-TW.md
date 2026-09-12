@@ -24,6 +24,7 @@
 - 自訂 OSC 傳送（任意位址/文字）、Webhook 外送推送、OSC 接收（9001 連接埠）擷取 VRChat Avatar 參數流量、可選「啟動即推送」。
 
 <img src="images/pusher.png" alt="推送預覽">
+<img src="images/hwinfo.png" alt="硬體訊息">
 
 ### 懸浮視窗
 

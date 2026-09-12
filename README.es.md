@@ -24,6 +24,7 @@ Herramienta de frecuencia cardíaca BLE en tiempo real para VRChat: envía tus p
 - Envío OSC personalizado (cualquier dirección/texto), push saliente por Webhook, receptor OSC (puerto 9001) para capturar el tráfico de parámetros del avatar de VRChat y la opción «empezar a enviar al arrancar».
 
 <img src="images/pusher.png" alt="Vista previa de plantilla">
+<img src="images/hwinfo.png" alt="Información del hardware">
 
 ### Ventanas flotantes
 

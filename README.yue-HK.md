@@ -24,6 +24,7 @@
 - 有自訂 OSC 發送（任意位址/文字）、Webhook 出去推送、OSC 接收（9001 port）睇 VRChat Avatar 參數，仲可以揀「一開就推送」。
 
 <img src="images/pusher.png" alt="推送預覽">
+<img src="images/hwinfo.png" alt="硬體訊息">
 
 ### 懸浮視窗
 

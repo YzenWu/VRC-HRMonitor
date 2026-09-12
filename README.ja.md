@@ -24,6 +24,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - カスタム OSC 送信（任意アドレス / テキスト）、Webhook 送信、OSC 受信（ポート 9001）による VRChat アバターパラメータの監視、「起動時に自動送信」オプション。
 
 <img src="images/pusher.png" alt="送信プレビュー">
+<img src="images/hwinfo.png" alt="ハードウェア情報">
 
 ### フローティングウィンドウ
 

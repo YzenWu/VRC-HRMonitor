@@ -24,6 +24,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - 사용자 지정 OSC 전송(임의 주소/텍스트), Webhook 아웃바운드 푸시, OSC 수신(9001 포트)으로 VRChat 아바타 파라미터 트래픽 캡처, 「시작 시 자동 푸시」 옵션.
 
 <img src="images/pusher.png" alt="푸시 미리보기">
+<img src="images/hwinfo.png" alt="하드웨어 정보">
 
 ### 플로팅 창
 

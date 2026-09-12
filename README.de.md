@@ -24,6 +24,7 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 - Benutzerdefinierter OSC-Versand (beliebige Adresse/Text), ausgehende Webhook-Pushes, OSC-Empfänger (Port 9001) zum Mitschneiden des Avatar-Parameter-Traffic von VRChat sowie die Option „Beim Start sofort senden“.
 
 <img src="images/pusher.png" alt="Versand-Vorschau">
+<img src="images/hwinfo.png" alt="Hardware-Informationen">
 
 ### Schwebende Fenster
 
