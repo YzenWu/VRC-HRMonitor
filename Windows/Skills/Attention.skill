@@ -1,0 +1,112 @@
+﻿# Attention — HeartRateMonitor 安全与一致性红线
+
+适用范围：`Windows/App`（C# 后端）、`Windows/Shells/WebView2Host`（壳）、`Windows/WebUI`（Vue 前端）。
+本文件是**硬约束**，不是建议。任何一条被违反，视为该改动不可合并。
+
+---
+
+## 0. 判定原则
+
+| 原则 | 含义 |
+|------|------|
+| 最小信任面 | 只有回环（`127.0.0.1`/`::1`）流量是受信的；其余一律先认证再谈权限。 |
+| 明文零留存 | 凭据在离开输入框那一刻起，只以哈希形态存在于内存/磁盘/日志。 |
+| 不引入不可信执行 | 禁止任何形式的动态代码执行、外部脚本注入、第三方远端依赖。 |
+| 单一设计源 | 颜色/间距/线宽/圆角只能取自设计变量，不允许写死。 |
+
+---
+
+## 1. 禁用清单（前端）
+
+以下 API **禁止出现在 `Windows/WebUI/src` 下任何文件**：
+
+| 禁用 | 原因 | 替代 |
+|------|------|------|
+| `window.prompt` / `confirm` / `alert` | 原生框不受主题控制；`prompt` 对密码类输入**明文回显**，且无法脱敏 | `components/XDialog.vue` + `type="password"` 输入 |
+| `eval` / `new Function` / `setTimeout('字符串')` | 动态执行 = 任意代码执行入口 | 显式函数引用 |
+| `el.innerHTML = 变量` / `v-html` 绑定外部数据 | XSS（日志、设备名、OSC 地址都来自外部） | 文本插值 `{{ }}` |
+| 远端 `<script src>` / CDN 字体 / 远端图片 | 引入不可控第三方，且离线不可用 | 本地打包资源 |
+| `localStorage` 存 token / 密码 / 用户库 | JS 可读，等于把凭据交给页面脚本 | 会话只走后端 `HttpOnly` Cookie |
+| 向非同源地址 `fetch` | 会把本机数据外发 | 只请求同源相对路径 |
+
+只有一个例外：`api/watchdog.ts` 的探活 `fetch('/api/status')` —— 同源、只读、无副作用。
+
+## 2. 凭据与会话（后端 `Web/RemoteAuth.cs`）
+
+- **密码**：`PBKDF2-SHA256`，20 万次迭代 + 16 字节随机盐，落盘只有 `salt`/`hash`。
+  校验必须走 `CryptographicOperations.FixedTimeEquals`（防时序侧信道）。
+- **会话 token**：32 字节 `RandomNumberGenerator` 随机值。
+  **服务端只保存 `SHA256(token)`**；原始 token 只在登录响应的 `Set-Cookie` 里出现一次。
+  会话表 `config_remote_sessions.json` 里没有任何可直接复用的凭据。
+- **管理接口对外暴露的 id 必须是 token 哈希**，不是 token 本身（`/api/remote/sessions`）。
+- **Cookie 三件套**：`HttpOnly`（JS 读不到）+ `SameSite=Lax`（Strict 会导致外部跳转丢登录）+ `Max-Age`（缺失即会话 Cookie，手机切 App 就掉登录）。
+- **指纹只绑 `User-Agent`**。时区/语言/IP/Cookie 都会在正常使用中变化（切 Tab、跨时区、Wi-Fi 漫游），计入等值比对等于随机注销用户 —— 这是已经踩过两次的坑。
+- 指纹不符**只拒绝本次请求并计数**，累计 10 次才销毁会话；否则任何人拿到 token 配个错 UA 就能把合法用户踢下线。
+- 禁止把密码、token、原始 Cookie 写进日志。日志里只允许出现用户名、来源 IP、token 哈希前 8 位。
+
+## 3. 回环铁律
+
+```csharp
+var trusted = RemoteAuth.IsLoopback(ip);   // 唯一依据 = 客户端 IP
+```
+
+- 是否需要认证**只看客户端 IP**，与监听端口无关（`LocalEndPoint` 在部分环境不可靠）。
+- 回环流量无条件放行且恒为 `admin`；本地前端从路由层就不可能出现 401/403。
+- 非回环且未登录，只放行 `/api/remote/*` 与静态资源（登录页要能加载）。
+- `loopbackOnly` 检查同样只作用于非回环客户端。
+
+## 4. 禁用清单（后端）
+
+| 禁用 | 原因 |
+|------|------|
+| `Process.Start` 拼接用户输入 | 命令注入 |
+| 用请求参数拼接文件路径后直接读写 | 路径穿越；静态服务必须校验规范化路径仍在 `webui/` 内 |
+| SQL 字符串拼接 | 注入；一律参数化 |
+| 自动申请管理员权限 / 自动执行 `netsh` | 提权动作只能提示命令，由用户自己执行 |
+| 向第三方地址上报任何本机数据 | 越权外发 |
+| 反射式加载外部 DLL / 动态编译 | 不可信执行 |
+
+OSC 是唯一的对外网络出口，且只发往用户显式配置的 `ip:port`。
+
+## 5. 权限模型
+
+- 角色两档：`admin`（全量 + 管理授权）、`user`（板块白名单）。
+- 白名单**双层拦截**：前端隐藏导航/路由（体验），后端 `ApiOpAllowed()` 接口级 403（安全）。
+  前端隐藏不算安全措施，后端兜底才算。
+- 敏感前缀对 `user` 恒 403：`/api/cli`、`/api/shutdown`、`/api/settings`、`/api/apiserver*`、`/api/logs/dump|export`、`/api/float/*`、`/api/hw/config`、`/api/devices/config`、`/api/scan`、`/api/device/block`、`/api/devices/batch`。
+- 删除用户/降级角色时必须保证**至少保留一个 admin**。
+
+## 6. UI 一致性红线
+
+- 颜色只能用设计变量：`--background/--card/--popover/--border/--input/--primary/--ring/--muted-foreground/--good/--warn/--bad/--info`。禁止写死 `#fff`、`#000`、`rgb(...)` 作为主题色。
+- 分割线宽度一律 `var(--hairline)`（亮色 1.5px / 暗色 1px），禁止直接写 `1px solid var(--border)`。
+- 控件必须用统一实现：按钮 `.x-btn`、输入 `.x-input`、下拉 `XSelect`、开关 `XSwitch`、卡片 `.x-card`、列表行 `.x-row`、对话框 `XDialog`。
+  原生 `checkbox` / `range` / `textarea` / `color` / `number` 已在 `globals.css` 全局重绘，不要再逐页覆盖。
+- 遮罩与弹窗一律「模糊背景 + 中置内容」：`color-mix(in oklab, var(--background) 58%, transparent)` + `backdrop-filter: blur(10px)`。禁止再叠一层深色矩形。
+- 尺寸随密度缩放：涉及高宽的常量写成 `calc(Npx * var(--sp))`。
+- 新增文案必须先进 `src/lang.ts`（五语言齐全），再跑 `npm run locales` 生成 JSON。禁止在组件里硬编码可见文本。
+
+## 7. 数据保存
+
+- 配置页一律**实时保存**：`composables/useAutoSave.ts`（400ms debounce），载入完成后调 `hydrated()` 对齐基线。
+- 不允许出现「改了不点保存就丢」的表单；`dirty.ts` 登记只作为关窗兜底，不是主路径。
+- 端口等非法中间值要跳过保存（等用户输完），不能把 `NaN` 提交到后端。
+
+## 8. 提交前必过
+
+```powershell
+cd Windows/WebUI ; npm run locales ; npm run typecheck ; npm test
+dotnet build "Windows/App/HeartRateMonitor.csproj" -c Debug
+dotnet build "Windows/Shells/WebView2Host/WebView2Host.csproj" -c Debug
+powershell -File Windows\build.ps1 -Mode debug
+```
+
+要求：`vue-tsc` 0 error、vitest 全绿、两个 C# 工程 0 error。
+
+自查清单：
+
+- [ ] 全仓 grep `prompt(`/`confirm(`/`eval(`/`innerHTML` 无新增命中
+- [ ] 新增/改动的凭据路径没有明文落盘或进日志
+- [ ] 回环请求全接口 200（本地前端不可被锁死）
+- [ ] 远程未登录只能拿到登录页；`user` 角色敏感接口 403
+- [ ] 亮色 + 暗色 × 七套配色下新 UI 的分割线与文字都可辨认

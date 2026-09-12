@@ -1,0 +1,1091 @@
+/* ============================================================
+ * PH 0 PH 1 PH 2 PH 3 (Step/Design language PH 4  PH 5)
+ * PH 0   PH 1 ( PH 2)+ PH 3  syntax.
+ * Darkness and colour are two independent dimensions (  PH 0 injected into <   PH 1):
+ *   PH 0   =   PH 1 |   PH 2
+ *   data-palette = system | default | forest | sunset | ocean | violet | custom
+ * PH 0  determines the neutral colour of the background/foreground/margin,    PH 1    decides only to emphasize the color and the slight color;
+ * Round angle/density is injected by   PH 0;   PH 1  / --  PH 2; emphasis is placed on   PH 3 / --  PH 4 / -- PH 5.
+ * ============================================================ */
+
+/* - Light colour (:   PH 0  Default =   PH 1    PH 2, Cloning   PH 3    PH 4) - */
+:root {
+  /* The main content area canvas (#8) was changed from pure white to light ash   PH 0, with white cards/white containers having layers;
+     暗色维度仍近等于 --card（0.205），靠边框与卡片分隔。 */
+  --background: oklch(0.966 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  /* Bright lines:   PH 0  Default 0.922 on white bottom is largely invisible.
+     颜色压到 0.80 并把线宽提到 1.5px（--hairline），暗色维度再改回 1px。 */
+  --border: oklch(0.8 0 0);
+  --input: oklch(0.78 0 0);
+  --hairline: 1.5px;
+  --ring: oklch(0.708 0 0);
+  --radius: 6px;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.8 0 0);
+
+  /* PH 0  semantic colour (state/type) */
+  --good: #22c55e;
+  --warn: #eab308;
+  --bad: #ef4444;
+  --info: #3b82f6;
+
+  /* Shadows/shadings (lights fade and dark colours allow for deepness; all three semantic values are quoted in the components) */
+  --elev-sm: 0 1px 3px rgb(0 0 0 / 10%);
+  --elev-md: 0 8px 24px rgb(0 0 0 / 10%);
+  --elev-lg: 0 18px 50px rgb(0 0 0 / 14%);
+  --scrim: rgb(0 0 0 / 30%);
+
+  /* Layout/density */
+  --sp: 1;
+  --nav-w: 224px;
+  --ctl-h: calc(32px * var(--sp));
+  /* High benchmark, such as bottom bar/sidebar drop button (#3/#37) */
+  --bar-h: calc(26px * var(--sp));
+  --gap-1: calc(4px * var(--sp));
+  --gap-2: calc(8px * var(--sp));
+  --gap-3: calc(12px * var(--sp));
+  --gap-4: calc(16px * var(--sp));
+  --font-body: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --font-mono: Consolas, 'Cascadia Mono', monospace;
+  font-family: var(--font-body);
+}
+
+/* - Special fit for bright colour dimensions -
+   :root 的 zinc light 只给了中性色，还有三处在白底上不成立，必须单独压暗：
+     ① 语义色（good/warn/bad/info）是按深色底挑的，#eab308 在白底上几乎看不见；
+     ② --secondary（0.97）与白色卡片几乎同色，表头/子 Tab 底纹分不出来；
+     ③ 阴影在白底上要更淡更散，否则像脏斑。
+   注意选择器要同时覆盖「显式 light」与「未标 mode 的默认态」。 */
+:root:not(.dark):not([data-mode='dark']) {
+  --good: #15803d;
+  --warn: #a16207;
+  --bad: #b91c1c;
+  --info: #1d4ed8;
+  --secondary: oklch(0.94 0 0);
+  --muted: oklch(0.94 0 0);
+  --muted-foreground: oklch(0.44 0 0);
+}
+[data-mode='light'] {
+  --good: #15803d;
+  --warn: #a16207;
+  --bad: #b91c1c;
+  --info: #1d4ed8;
+  --secondary: oklch(0.94 0 0);
+  --muted: oklch(0.94 0 0);
+  --muted-foreground: oklch(0.44 0 0);
+}
+
+/* -  Dark dimension: Dark colour =   PH 0 PH 1, Cloning   PH 2  (light colour above:  PH 3) - */
+.dark,
+[data-mode='dark'] {
+  --background: oklch(0.205 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  /* It's clear on the dark bottom  PH 0... no need for thicker */
+  --hairline: 1px;
+  --ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.19 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  color-scheme: dark;
+
+  /* Shadow/shade in dark: Deep is dark in itself, and shadows must have a sense of presence but no exposure */
+  --elev-sm: 0 1px 3px rgb(0 0 0 / 35%);
+  --elev-md: 0 8px 24px rgb(0 0 0 / 32%);
+  --elev-lg: 0 18px 50px rgb(0 0 0 / 45%);
+  --scrim: rgb(0 0 0 / 55%);
+}
+
+/* - Colour dimension: emphasis on colour is always injected by   PH 0 ( PH 1  takes   PH 2  emphasis) -
+   放在明暗块之后，覆盖 zinc 的中性 primary/ring/accent，使强调色真正可见。 */
+:root,
+[data-mode='dark'],
+[data-mode='light'] {
+  --primary: var(--c-accent, #5b9dff);
+  --primary-foreground: var(--c-accent-fg, #fff);
+  --ring: var(--c-accent, #5b9dff);
+  --accent: rgb(var(--c-secondary-accent-rgb, var(--c-accent-rgb, 91 157 255)) / 14%);
+  --accent-foreground: var(--foreground);
+  --sidebar-accent: rgb(var(--c-secondary-accent-rgb, var(--c-accent-rgb, 91 157 255)) / 14%);
+  --sidebar-accent-foreground: var(--foreground);
+}
+
+/* Forest / Sunset: Add a homogenous fine-tune to the neutral bottom (separate one, avoid   PH 0  self-reference).
+   亮色版的 --secondary / --border 必须显式给足对比度，否则 palette 会把上面
+   「亮色专项适配」里压暗的值又抬回接近白色（表头与卡片糊成一片、分割线消失）。 */
+[data-palette='forest'][data-mode='dark'] {
+  --background: oklch(0.21 0.025 150);
+  --card: oklch(0.235 0.028 150);
+  --popover: oklch(0.235 0.028 150);
+  --secondary: oklch(0.3 0.03 150);
+  --sidebar: oklch(0.19 0.02 150);
+}
+[data-palette='forest'][data-mode='light'] {
+  --background: oklch(0.955 0.016 150);
+  --card: oklch(1 0 0);
+  --secondary: oklch(0.935 0.018 150);
+  --muted: oklch(0.935 0.018 150);
+  --sidebar: oklch(0.982 0.01 150);
+  --border: oklch(0.8 0.014 150);
+  --input: oklch(0.78 0.014 150);
+  --sidebar-border: oklch(0.8 0.014 150);
+}
+[data-palette='sunset'][data-mode='dark'] {
+  --background: oklch(0.21 0.02 45);
+  --card: oklch(0.235 0.022 45);
+  --popover: oklch(0.235 0.022 45);
+  --secondary: oklch(0.3 0.024 45);
+  --sidebar: oklch(0.19 0.015 45);
+}
+[data-palette='sunset'][data-mode='light'] {
+  --background: oklch(0.955 0.018 55);
+  --card: oklch(1 0 0);
+  --secondary: oklch(0.935 0.018 55);
+  --muted: oklch(0.935 0.018 55);
+  --sidebar: oklch(0.982 0.01 55);
+  --border: oklch(0.8 0.016 55);
+  --input: oklch(0.78 0.016 55);
+  --sidebar-border: oklch(0.8 0.016 55);
+}
+/* Sea blue. */
+[data-palette='ocean'][data-mode='dark'] {
+  --background: oklch(0.2 0.03 215);
+  --card: oklch(0.235 0.035 215);
+  --popover: oklch(0.235 0.035 215);
+  --secondary: oklch(0.3 0.04 215);
+  --sidebar: oklch(0.18 0.025 215);
+}
+[data-palette='ocean'][data-mode='light'] {
+  --background: oklch(0.952 0.02 215);
+  --card: oklch(1 0 0);
+  --secondary: oklch(0.93 0.024 215);
+  --muted: oklch(0.93 0.024 215);
+  --sidebar: oklch(0.982 0.012 215);
+  --border: oklch(0.79 0.022 215);
+  --input: oklch(0.77 0.022 215);
+  --sidebar-border: oklch(0.79 0.022 215);
+}
+/* Violet. */
+[data-palette='violet'][data-mode='dark'] {
+  --background: oklch(0.205 0.03 285);
+  --card: oklch(0.24 0.035 285);
+  --popover: oklch(0.24 0.035 285);
+  --secondary: oklch(0.305 0.04 285);
+  --sidebar: oklch(0.185 0.025 285);
+}
+[data-palette='violet'][data-mode='light'] {
+  --background: oklch(0.952 0.02 285);
+  --card: oklch(1 0 0);
+  --secondary: oklch(0.93 0.026 285);
+  --muted: oklch(0.93 0.026 285);
+  --sidebar: oklch(0.982 0.012 285);
+  --border: oklch(0.79 0.024 285);
+  --input: oklch(0.77 0.024 285);
+  --sidebar-border: oklch(0.79 0.024 285);
+}
+
+/* Custom (  PH 0  Injection -- PH 1 + tri-value -- PH 2)
+   底色是用户显式选的，明暗两种模式下都直接采用。 */
+[data-palette='custom'] {
+  --background: var(--c-bg, #14171b);
+  --card: var(--c-panel, #1c2128);
+  --popover: var(--c-panel, #1c2128);
+  --sidebar: var(--c-panel, #1c2128);
+}
+
+/* Basement */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  overflow: hidden;
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* ============================================================
+ * Layout: Left Navigator + Main Area (consisting of   PH 0   PH 1)
+ * ============================================================ */
+.hrm-app {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hrm-nav {
+  display: flex;
+  flex-direction: column;
+  width: var(--nav-w);
+  min-width: var(--nav-w);
+  background: var(--sidebar);
+  border-right: var(--hairline) solid var(--sidebar-border);
+  transition: width 0.18s linear, min-width 0.18s linear;
+}
+.nav-collapsed .hrm-nav {
+  width: 60px;
+  min-width: 60px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  height: 46px;
+  padding: 0 var(--gap-2);
+  border-bottom: var(--hairline) solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+.nav-brand .brand-title {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--foreground);
+  /* PH 0: Leave a width transition, text enters along the sidebar Go on. */
+  max-width: 160px;
+  opacity: 1;
+  transition: max-width 0.18s linear, opacity 0.12s linear;
+}
+.nav-collapsed .nav-brand .brand-title {
+  max-width: 0;
+  opacity: 0;
+}
+/* Collapse brand lines are centered: text has been taken and point to the dot/capacit level is no longer left */
+.nav-collapsed .nav-brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.nav-menu {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--gap-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  height: var(--ctl-h);
+  padding: 0 var(--gap-2);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--sidebar-foreground);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s linear, color 0.15s linear;
+}
+.nav-item:hover {
+  background: var(--sidebar-accent);
+}
+.nav-item.active {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+.nav-item .nav-ico {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.nav-item .nav-label {
+  /* The same abbreviated animation as the brand title: the folding is "sliding in" rather than just disappearing. */
+  max-width: 160px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 0.18s linear, opacity 0.12s linear;
+}
+.nav-collapsed .nav-item {
+  justify-content: center;
+  padding: 0;
+}
+.nav-collapsed .nav-item .nav-label {
+  max-width: 0;
+  opacity: 0;
+}
+
+.nav-foot {
+  border-top: var(--hairline) solid var(--sidebar-border);
+  /* The same height benchmark (#3/#37) shared with the bottom status bar: any folding button at density is like the bottom bar, etc. High */
+  display: flex;
+  align-items: center;
+  height: var(--bar-h);
+  padding: 0 var(--gap-2);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* - Main area - */
+.hrm-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+}
+.hrm-page {
+  flex: 1;
+  min-height: 0;
+  padding: var(--gap-2);
+  display: flex;
+  min-width: 0;
+}
+.nav-collapsed ~ .hrm-main .hrm-page {
+  /* Fold page to obtain wider use */
+}
+
+/* Page content container (cloning   PH 0.   PH 1: fine border corner card host)
+   底色走 --background：浅色时露出浅灰画布让页内白卡分层，暗色与 --card 同值无差异 */
+.x-container {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.page-host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Header (general on page, clone   PH 0 view title rhythm) */
+.page-head {
+  padding: var(--gap-2) var(--gap-2) 0;
+}
+.page-head h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+.page-head .page-desc {
+  margin: var(--gap-1) 0 0;
+  color: var(--muted-foreground);
+  font-size: 12.5px;
+}
+/* Header operating area (thirty-sixth round #4): Title left, button right - Editable page entry */
+.page-head.with-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gap-3);
+}
+.page-head.with-actions .page-head-title h1 {
+  margin: 0;
+}
+.page-body {
+  padding: var(--gap-2);
+}
+
+/* Statusbar ( PH 0 PH 1 same: Thread to Bottom; Height = -- PH 2   equal to the sidebar button, #3/#37) */
+.hrm-status {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  height: var(--bar-h);
+  padding: 0 var(--gap-2);
+  border-top: var(--hairline) solid var(--border);
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-size: 11.5px;
+  flex-shrink: 0;
+  user-select: none;
+  /* Maximum width of device capsule name (overlayed by advanced theme setting) */
+  --chip-name-w: 108px;
+}
+.hrm-status .sep {
+  opacity: 0.35;
+}
+
+/* ============================================================
+ * Common component style (light   PH 0 wind)
+ * Uniform rules (a full-station control must be complied with and a control that does not allow the original appearance to recur):
+ *   Height = -- PH 0 | Round angle = -- PH 1  Derivative | Border = -- PH 2 + -- PH 3
+ *   Focus = -- PH 0 | Emphasis = -- PH 1 | Transition  PH 2
+ * ============================================================ */
+.x-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--ctl-h);
+  padding: 0 calc(12px * var(--sp));
+  border-radius: calc(var(--radius) - 1px);
+  border: var(--hairline) solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s linear, border-color 0.15s linear;
+}
+.x-btn:hover {
+  background: var(--accent);
+}
+.x-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.x-btn.primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: transparent;
+}
+.x-btn.primary:hover {
+  filter: brightness(1.1);
+}
+.x-btn.danger {
+  background: var(--destructive);
+  color: white;
+  border-color: transparent;
+}
+.x-btn.ghost {
+  background: transparent;
+  border-color: transparent;
+}
+.x-btn.sm {
+  height: calc(26px * var(--sp));
+  padding: 0 calc(8px * var(--sp));
+  font-size: 12px;
+}
+.x-btn .x-btn-ico {
+  width: 15px;
+  height: 15px;
+}
+
+.x-card {
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  overflow: hidden;
+}
+.x-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  padding: calc(8px * var(--sp)) calc(12px * var(--sp));
+  font-weight: 600;
+  font-size: 13.5px;
+  border-bottom: var(--hairline) solid var(--border);
+}
+.x-card-body {
+  padding: calc(10px * var(--sp)) calc(12px * var(--sp));
+}
+
+/* - Full-station card folding (#10: PH 0 injection; PH 1  height organized by internal connection of the injector) - */
+.x-card-head .cc-chev {
+  /* Collapse arrows injected: rotate -90° with global control colour and fold -90° */
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: transform 0.2s linear, opacity 0.15s linear;
+}
+.x-card-head .cc-chev:hover {
+  opacity: 1;
+}
+.x-card.is-cc > .x-card-head .cc-chev {
+  transform: rotate(-90deg);
+}
+.x-card > .x-card-head {
+  cursor: pointer;
+}
+.x-card-body {
+  /* Collapse Animation (#10): High/Transparency/ Vertical   PH 0 Transition;   PH 1  Disabled from full-stop gate */
+  overflow: hidden;
+  transition: height 0.24s linear, opacity 0.18s linear, padding 0.24s linear;
+}
+.x-card.is-cc > .x-card-body {
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+/* Text type input:   PH 0 /   PH 1 /   PH 2  Share the same look */
+.x-input,
+.x-select,
+textarea.x-input {
+  height: var(--ctl-h);
+  padding: 0 calc(8px * var(--sp));
+  border-radius: calc(var(--radius) - 1px);
+  border: var(--hairline) solid var(--input);
+  background: var(--popover);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s linear, box-shadow 0.15s linear;
+}
+.x-input::placeholder,
+textarea.x-input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 0.75;
+}
+.x-input:hover:not(:disabled),
+.x-select:hover:not(:disabled) {
+  border-color: var(--ring);
+}
+.x-input:focus,
+.x-select:focus,
+textarea.x-input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgb(var(--c-accent-rgb, 91 157 255) / 22%);
+}
+.x-input:disabled,
+.x-select:disabled,
+textarea.x-input:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+/* Multiline input is not subject to fixed height */
+textarea.x-input {
+  height: auto;
+  min-height: calc(var(--ctl-h) * 2);
+  padding: calc(6px * var(--sp)) calc(8px * var(--sp));
+  line-height: 1.5;
+  resize: vertical;
+}
+/* Number input: Remove the top-down arrows on the browser's own belt (all pages are numbered in width) */
+.x-input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.x-input[type='number']::-webkit-outer-spin-button,
+.x-input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Colour pickers: buttoned, coloured and whited Side */
+.x-input[type='color'] {
+  width: calc(46px * var(--sp));
+  padding: calc(3px * var(--sp));
+  cursor: pointer;
+}
+.x-input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.x-input[type='color']::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius) - 3px);
+}
+
+/* Checkbox: The original appearance is not uniform under two obscurities ( PH 0  top is blue and white), all redraw */
+input[type='checkbox']:not(.sw-input) {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: calc(15px * var(--sp));
+  height: calc(15px * var(--sp));
+  margin: 0;
+  border: var(--hairline) solid var(--input);
+  border-radius: max(2px, calc(var(--radius) - 3px));
+  background: var(--popover);
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.15s linear, border-color 0.15s linear;
+}
+input[type='checkbox']:not(.sw-input):hover {
+  border-color: var(--ring);
+}
+input[type='checkbox']:not(.sw-input):checked {
+  background: var(--primary);
+  border-color: transparent;
+}
+/* Tick: Spell with two borderes to avoid relying on the gill font */
+input[type='checkbox']:not(.sw-input):checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 32%;
+  height: 62%;
+  border: solid var(--primary-foreground);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(42deg);
+}
+input[type='checkbox']:not(.sw-input):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+input[type='checkbox']:not(.sw-input):disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Slider block: Orbital + round thumbs, sizes scaled with density ( PH 0... and   PH 1... each writing a set of pseudo elements) */
+input[type='range'] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: calc(16px * var(--sp));
+  min-width: 120px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: calc(4px * var(--sp));
+  border-radius: 999px;
+  background: var(--secondary);
+  border: var(--hairline) solid var(--border);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: calc(13px * var(--sp));
+  height: calc(13px * var(--sp));
+  margin-top: calc(-5px * var(--sp));
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: var(--elev-sm);
+  transition: transform 0.12s linear;
+}
+input[type='range']:hover::-webkit-slider-thumb,
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+input[type='range']::-moz-range-track {
+  height: calc(4px * var(--sp));
+  border-radius: 999px;
+  background: var(--secondary);
+  border: var(--hairline) solid var(--border);
+}
+input[type='range']::-moz-range-thumb {
+  width: calc(13px * var(--sp));
+  height: calc(13px * var(--sp));
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+}
+input[type='range']:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.x-muted {
+  color: var(--muted-foreground);
+}
+.x-mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+.x-gap {
+  display: flex;
+  gap: var(--gap-2);
+  align-items: center;
+}
+.x-grow {
+  flex: 1;
+  min-width: 0;
+}
+/* PH 0  (screw down): Larger than container, narrow screen  PH 1  do not break the parent container during the break */
+.xsel {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Vertical Separator (grouped in toolbar): same width -- PH 0, visible in light */
+.x-vsep {
+  flex-shrink: 0;
+  width: var(--hairline);
+  height: calc(20px * var(--sp));
+  background: var(--border);
+}
+
+/* List of rows: a line with a dividing line inside the card. Each page was originally linked to   PH 0 PH 1,
+   线宽与颜色容易走样（尤其亮色下 1px 看不清），统一收到这里。 */
+.x-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  padding: calc(5px * var(--sp)) var(--gap-3);
+  border-bottom: var(--hairline) solid var(--border);
+  font-size: 12.5px;
+}
+.x-row:last-child {
+  border-bottom: 0;
+}
+
+/* Generic list length limit (#13): height = shows maximum number of lines x row height, exceeding the scroll view in the container;
+   由调用方设 --cap-rows（行数，默认 10）与 --cap-row（单行高，默认 34px）。 */
+.x-cap-scroll {
+  max-height: calc(var(--cap-rows, 10) * var(--cap-row, 34px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Suspended Transition (Cloning  PH 0 PH 1  engagement) */
+.x-hover-card {
+  transition: background-color 0.2s linear, box-shadow 0.2s linear, border-color 0.2s linear;
+}
+.x-hover-card:hover {
+  background: var(--accent);
+  border-color: var(--ring);
+}
+
+/* PH 0  (top toggle, e. g.  PH 1  overview/data) */
+.x-subtabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--secondary);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.x-subtabs::-webkit-scrollbar {
+  height: 0;
+}
+.x-subtab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: calc(var(--ctl-h) - 6px);
+  padding: 0 calc(12px * var(--sp));
+  border: 0;
+  border-radius: calc(var(--radius) - 3px);
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s linear, color 0.15s linear;
+}
+.x-subtab:hover {
+  color: var(--foreground);
+}
+.x-subtab.active {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
+}
+.x-subtab .x-btn-ico {
+  width: 15px;
+  height: 15px;
+}
+
+/* ============================================================
+ * Animation: route switch / drawer mask
+ * ============================================================ */
+
+/* Route switching: fade upwards ( PH 0  with a long pressure to   PH 1  to avoid passivation) */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.16s linear, transform 0.16s linear;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* (a) Route switching (directive version): Slide in a sidebar adjoining — slide forward (turn downward) from right, exit from old pages to left;
+   反向则从左滑入、旧页向右退出。位移小（≤16px），避免窄屏出现横向滚动条。 */
+.page-fwd-enter-active,
+.page-fwd-leave-active,
+.page-back-enter-active,
+.page-back-leave-active {
+  transition: opacity 0.16s linear, transform 0.18s linear;
+}
+.page-fwd-enter-from {
+  opacity: 0;
+  transform: translateX(14px);
+}
+.page-fwd-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.page-back-enter-from {
+  opacity: 0;
+  transform: translateX(-14px);
+}
+.page-back-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+ * Response mode: tablet / mobile (tele-debugging and control)
+ * ============================================================ */
+
+/* The tablets and the following: the sidebar is replaced by a drawer (sliding) and the main area is full of width.
+   内置 WebView 壳（html.in-shell）例外：高 DPI 显示器上壳的 CSS 宽度可能只有 850 左右
+   （物理 2560 / 3 倍缩放），但它是桌面窗口，不该退化成手机抽屉。 */
+@media (max-width: 860px) {
+  html:not(.in-shell) .hrm-nav {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 232px;
+    min-width: 232px;
+    box-shadow: var(--elev-lg);
+    transition: transform 0.2s linear;
+  }
+  html:not(.in-shell) .nav-collapsed .hrm-nav {
+    /* A narrow screen "Fold" = whole of the screen, not the harvest icon */
+    width: 232px;
+    min-width: 232px;
+    transform: translateX(-100%);
+  }
+  html:not(.in-shell) .nav-collapsed .hrm-nav .nav-label,
+  html:not(.in-shell) .nav-collapsed .hrm-nav .brand-title {
+    max-width: 160px;
+    opacity: 1;
+  }
+  html:not(.in-shell) .nav-collapsed .hrm-nav .nav-item {
+    justify-content: flex-start;
+    padding: 0 var(--gap-2);
+  }
+  .hrm-page {
+    padding: var(--gap-1);
+  }
+  /* Touch target zoomed up to PH 0 */
+  :root {
+    --ctl-h: calc(36px * var(--sp));
+  }
+}
+
+/* Drawer mask: Click to close at any location (separated, desktop unrendered) */
+.nav-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  padding: 0;
+  border: 0;
+  background: var(--scrim);
+  cursor: pointer;
+  animation: scrim-in 0.18s linear;
+}
+
+/* Floating menu button when drawers are closed (to follow density with the same height without bottom bar) */
+.nav-fab {
+  position: fixed;
+  z-index: 30;
+  left: var(--gap-2);
+  bottom: calc(var(--bar-h) + var(--gap-2));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: var(--hairline) solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: var(--elev-md);
+  cursor: pointer;
+}
+.nav-fab:hover {
+  background: var(--accent);
+}
+
+/* Cell phone: Cards continue to tighten their inner margins and status strips */
+@media (max-width: 560px) {
+  .hrm-status {
+    gap: var(--gap-2);
+    font-size: 11px;
+  }
+  .page-head h1 {
+    font-size: 16px;
+  }
+  .x-card-body {
+    padding: calc(8px * var(--sp)) calc(9px * var(--sp));
+  }
+  .x-btn {
+    padding: 0 calc(9px * var(--sp));
+  }
+  /* Each page is     PH 0  with    PH 1  etc. to write the width of the control (   PH 1, etc.) and the narrow screen will spill horizontally; the container width will be pressured back.
+     内联样式优先级更高，只能用 !important 覆盖。 */
+  .x-input,
+  .x-select,
+  textarea {
+    max-width: 100% !important;
+  }
+  /* Control lines will always allow line breaks to avoid being squeezed out of the visual area */
+  .x-gap {
+    flex-wrap: wrap;
+  }
+}
+
+/* Mobile / narrow windows (L669): the single-line status bar cannot fit page name, engine state,
+   device chips, WS, version and the log tail; allow wrapping plus vertical scrolling instead of
+   clipping. The device chip strip takes a full row of its own so every chip stays reachable. */
+@media (max-width: 860px) {
+  .hrm-status {
+    height: auto;
+    min-height: var(--bar-h);
+    max-height: calc(var(--bar-h) * 2 + 8px);
+    flex-wrap: wrap;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-block: 2px;
+    row-gap: 2px;
+    line-height: 1.6;
+  }
+  .hrm-status .hr-strip {
+    flex: 1 1 100%;
+    /* The chip hover lift needs headroom; keep the negative-margin trick from the desktop rule. */
+    padding: 4px 2px;
+    margin: -4px -2px;
+  }
+  .hrm-status .log {
+    max-width: 100%;
+  }
+  /* Height is auto here, the drag grip has nothing to resize and only fights touch scrolling. */
+  .hrm-status .status-grip {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+  .hrm-nav,
+  .nav-item .nav-label,
+  .nav-brand .brand-title,
+  .page-enter-active,
+  .page-leave-active,
+  .page-fwd-enter-active,
+  .page-fwd-leave-active,
+  .page-back-enter-active,
+  .page-back-leave-active {
+    transition: none;
+  }
+  .nav-scrim {
+    animation: none;
+  }
+}
+
+/* Left towed protection (thirteenth round): Controls/photograms/normal text does not allow to be dragged out to hang the address - */
+* {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+[draggable='true'] {
+  -webkit-user-drag: element;
+  user-drag: element;
+}
+
+/* Ban page text selection (Twenty-ninth round #2); double-clicking on device lines/capsules is interactive rather than selective.
+       防止双击误触时顺带高亮/拖出一段文字；输入框/文本域/下拉/可编辑区保留选区以便编辑与复制。 ---- */
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Animated main gate
+   设置页「界面动画」关掉后，<html data-anim="off">：一刀切掉全站过渡与关键帧。
+   组件里的 scoped 样式优先级更高，只能用 !important 压过去。
+   Vue <Transition> 在时长为 0 时会立刻 resolve，所以弹窗/换页依然正常，只是没有过渡。 */
+[data-anim='off'],
+[data-anim='off'] *,
+[data-anim='off'] *::before,
+[data-anim='off'] *::after {
+  transition: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
+}

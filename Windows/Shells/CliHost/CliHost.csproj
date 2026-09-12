@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Standalone CLI entry point equivalent to HeartRateMonitor.exe CLI mode (same AppBoot + CliApp + CommandShell). -->
+    <OutputType>Exe</OutputType>
+    <AssemblyName>hrmcli</AssemblyName>
+    <RootNamespace>HrmCli</RootNamespace>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <!-- The referenced main assembly contains WinForms types (tray/overlay), so the same desktop framework reference is required. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- Framework-dependent by default to match the referenced HeartRateMonitor.csproj;
+         the standalone branch of the publish script overrides this with self-contained=true. -->
+    <SelfContained>false</SelfContained>
+    <!-- Version comes from Release.json via build.ps1 (-p:Version); no per-project source of truth. -->
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\App\HeartRateMonitor.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(ReleaseBuildTimeUtc)' != ''">
+      <_Parameter1>ReleaseBuildTimeUtc</_Parameter1>
+      <_Parameter2>$(ReleaseBuildTimeUtc)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- P2: shared version-json probe source linked into all four executables. -->
+    <Compile Include="..\..\VersionJson.cs" Link="VersionJson.cs" />
+  </ItemGroup>
+</Project>

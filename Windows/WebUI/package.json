@@ -1,0 +1,32 @@
+{
+  "name": "hrm-webui-v3",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "HeartRateMonitor V3 Web UI（Vue 3 · 布局/设计语言 Clone VRCX）",
+  "scripts": {
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File dev-webui.ps1",
+    "locales": "node scripts/lang2json.mjs",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File test-webui.ps1",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.468.0",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.1.0",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.5.0",
+    "jsdom": "^26.1.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.4.0",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^2.2.0"
+  }
+}

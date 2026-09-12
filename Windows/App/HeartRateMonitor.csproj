@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- debug 构建由 build 脚本传 -p:OutputType=Exe（显示控制台）；默认 WinExe -->
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>HeartRateMonitor</AssemblyName>
+    <RootNamespace>HeartRateMonitor</RootNamespace>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishSingleFile>false</PublishSingleFile>
+    <!-- 默认框架依赖（standalone 分支发布时用 self-contained=true 的命令行参数覆盖本默认值）。
+         CliHost 以 ProjectReference 引用本程序集，若本项随 RID 默认翻成 true 而宿主为
+         framework-dependent，会触发 NETSDK1151（自包含可执行文件不能被非自包含引用）。 -->
+    <SelfContained>false</SelfContained>
+    <!-- Version comes from Release.json via build.ps1 (-p:Version); no per-project source of truth. -->
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- P0: embed the repo Release.json as the release-metadata source; the product no longer ships the file. -->
+    <EmbeddedResource Include="..\Release.json" Link="Release.json">
+      <LogicalName>HeartRateMonitor.Release.json</LogicalName>
+    </EmbeddedResource>
+    <!-- P0: actual build time injected by build.ps1; overrides release_build_time_utc=auto at runtime. -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(ReleaseBuildTimeUtc)' != ''">
+      <_Parameter1>ReleaseBuildTimeUtc</_Parameter1>
+      <_Parameter2>$(ReleaseBuildTimeUtc)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- P2: shared version-json probe source linked into all four executables. -->
+    <Compile Include="..\VersionJson.cs" Link="VersionJson.cs" />
+  </ItemGroup>
+</Project>

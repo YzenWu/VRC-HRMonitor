@@ -1,0 +1,33 @@
+{
+  "project_name": "HeartRateMonitor",
+  "repo": "https://github.com/yzenwu/VRC-HRMonitor",
+  "repo_name": "yzenwu/VRC-HRMonitor",
+  "author": "Yzen Wu",
+  "author_url": "https://github.com/yzenwu",
+  "thumbnail": "image/heart.svg",
+
+  "release_name": "HeartRateMonitor Pre 0.0.1",
+  "release_version": "0.0.1-pre",
+  "release_build_time_utc": "auto",
+  "build_note": "Pre 0.0.1 — first public preview",
+  "build_target": "x64",
+  "asset_pattern": "HeartRateMonitor-*-x64.zip",
+
+  "license": "MIT",
+  "license_context": "https://github.com/yzenwu/VRC-HRMonitor/LICENSE",
+
+  "icons": {
+    "engine": "./image/heart.ico",
+    "webui": "./image/heart.ico",
+    "cli": "./image/heart.ico",
+    "dump": "./image/heart.ico",
+    "tray": "./image/heart.ico"
+  },
+
+  "components": {
+    "engine": "0.0.1",
+    "webui": "0.0.1",
+    "cli": "0.0.1",
+    "dump": "0.0.1"
+  }
+}

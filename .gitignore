@@ -1,0 +1,27 @@
+# ===== 构建产物 / 缓存（可重建） =====
+Built/
+bin/
+obj/
+target/
+node_modules/
+dist/
+*.user
+
+# ===== 运行数据 =====
+logs/
+*.log
+*.db
+exports/
+
+# ===== 旧归档快照（整站大快照不入库；Archives 计划文档保留入库） =====
+Backup/
+
+# ===== 参照源码（只读研究，不入库） =====
+VRCX-2026.07.18/
+
+# ===== 计划文档（版本控制之外；仅根目录的旧 plan.md，Linux/Plan.md 等规划文档入库） =====
+/plan.md
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db

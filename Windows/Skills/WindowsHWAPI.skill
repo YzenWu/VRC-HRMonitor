@@ -1,0 +1,280 @@
+---
+name: hardware-info-api
+description: |
+  This skill provides a comprehensive reference for native Windows APIs and interfaces 
+  to retrieve hardware information (CPU, memory, disk, network, GPU, system) without 
+  requiring third-party drivers or vendor-specific SDKs. It covers WMI performance 
+  counters, Win32 API functions, and standard system interfaces available on most 
+  Windows computers.
+license: MIT
+---
+
+# Windows Hardware Information API Reference
+
+This skill documents native Windows interfaces for retrieving hardware information. 
+All APIs listed are available on most Windows systems without additional driver 
+or vendor SDK installations.
+
+---
+
+## CPU Information
+
+### Static CPU Information
+
+**`GetSystemInfo`** (`kernel32.dll`)
+
+Retrieves hardware information including processor type, number of processors, 
+page size, and OEM identifier.[reference:0]
+
+```c
+SYSTEM_INFO siSysInfo;
+GetSystemInfo(&siSysInfo);
+// siSysInfo.dwNumberOfProcessors - number of logical CPUs
+// siSysInfo.dwProcessorType - processor architecture
+```
+
+GetLogicalProcessorInformationEx (kernel32.dll)
+
+Retrieves detailed logical processor information, including core-to-logical 
+processor mapping.
+
+---
+
+CPU Temperature (Limited Availability)
+
+WMI Class: Win32_PerfFormattedData_Counters_ThermalZoneInformation
+
+Available on some systems to retrieve thermal zone (CPU package) temperature. 
+Requires administrator privileges. May not be populated on all hardware.
+
+```powershell
+Get-WmiObject -Query "SELECT * FROM Win32_PerfFormattedData_Counters_ThermalZoneInformation" -Namespace "root/CIMV2"
+```
+
+WMI Class: MSAcpi_ThermalZoneTemperature (root/wmi)
+
+ACPI thermal zone sensor - returns CPU package approximate temperature. 
+Requires administrator privileges. Not available on all systems.
+
+---
+
+Memory Information
+
+System Memory Status
+
+GlobalMemoryStatusEx (kernel32.dll)
+
+Retrieves current physical and virtual memory usage information including 
+total physical memory, available physical memory, memory load, and page file 
+information.
+
+```c
+MEMORYSTATUSEX memStatus;
+memStatus.dwLength = sizeof(MEMORYSTATUSEX);
+GlobalMemoryStatusEx(&memStatus);
+// memStatus.ullTotalPhys - total physical memory
+// memStatus.ullAvailPhys - available physical memory
+// memStatus.dwMemoryLoad - current memory load percentage
+```
+
+GetPerformanceInfo (psapi.dll)
+
+Retrieves performance information including physical memory available, 
+commit total, and commit limit.
+
+---
+
+Memory Performance Counters
+
+WMI Performance Counter Classes (Win32_PerfFormattedData_*)
+
+Pre-calculated performance counter data available through WMI.
+
+Counter Class Description
+Win32_PerfFormattedData_PerfOS_Memory System memory counters: Available Bytes, Committed Bytes, Page Faults/sec, Cache Bytes
+Win32_PerfFormattedData_PerfProc_Process Per-process memory counters
+
+PDH Performance Counters (pdh.dll)
+
+Programmatic access to performance counters used by Perfmon.
+
+Memory counters include: \Memory\Available Bytes, \Memory\Committed Bytes, 
+\Memory\% Committed Bytes In Use
+
+---
+
+Disk Storage Information
+
+Disk Space
+
+GetDiskFreeSpaceEx (kernel32.dll)
+
+Retrieves disk volume space information: total space, total free space, 
+and free space available to the calling user.
+
+```c
+ULARGE_INTEGER available, total, free;
+GetDiskFreeSpaceEx(L"C:\\", &available, &total, &free);
+// total.QuadPart - total disk space in bytes
+// free.QuadPart - total free space in bytes
+```
+
+---
+
+Disk I/O Performance
+
+WMI Class: Win32_PerfFormattedData_PerfDisk_PhysicalDisk
+
+Physical disk performance counters including read/write bytes/sec, 
+disk queue length, and disk time percentages.
+
+Property Description
+DiskReadBytesPerSec Bytes read per second
+DiskWriteBytesPerSec Bytes written per second
+DiskBytesPerSec Total bytes per second
+CurrentDiskQueueLength Current queue length
+PercentDiskTime Disk busy percentage
+
+PDH Performance Counters (pdh.dll)
+
+\PhysicalDisk(*)\Disk Read Bytes/sec
+\PhysicalDisk(*)\Disk Write Bytes/sec
+\PhysicalDisk(*)\% Disk Time
+
+DeviceIoControl + IOCTL_DISK_PERFORMANCE
+
+Retrieves raw disk performance statistics including read/write counts, 
+byte counts, and time spent.
+
+---
+
+Network Adapter Information
+
+Adapter Configuration
+
+GetAdaptersInfo (iphlpapi.dll)
+
+Retrieves IPv4 configuration information for all network adapters including 
+adapter name, description, MAC address, IP address, subnet mask, gateway, 
+and DHCP configuration.
+
+```c
+IP_ADAPTER_INFO adapterInfo[256];
+ULONG bufferSize = sizeof(adapterInfo);
+GetAdaptersInfo(adapterInfo, &bufferSize);
+// Iterates through linked list of IP_ADAPTER_INFO structures
+```
+
+GetAdaptersAddresses (iphlpapi.dll)
+
+Extended adapter information including both IPv4 and IPv6 addresses.
+
+---
+
+Network Performance
+
+WMI Class: Win32_PerfRawData_Tcpip_NetworkInterface
+
+Raw network interface performance counters including bytes sent/received 
+per second.
+
+Property Description
+BytesReceivedPerSec Bytes received per second
+BytesSentPerSec Bytes sent per second
+BytesTotalPerSec Total bytes per second
+
+WMI Class: Win32_PerfFormattedData_Tcpip_NetworkInterface
+
+Pre-calculated network performance data.
+
+PowerShell: Get-NetAdapterStatistics
+
+Returns cumulative bytes sent and received for network adapters.
+
+---
+
+Graphics / GPU Information
+
+Basic GPU Information
+
+WMI Class: Win32_VideoController
+
+Retrieves basic GPU information: name, adapter RAM, driver version. 
+Does NOT provide temperature, utilization, or detailed VRAM usage.
+
+```powershell
+Get-WmiObject -Class Win32_VideoController | Select-Object Name, AdapterRAM
+```
+
+---
+
+GPU Temperature and Performance
+
+Windows does NOT provide a native, vendor-agnostic API for GPU temperature, 
+utilization, or detailed VRAM usage. These require vendor-specific SDKs:
+
+Vendor SDK/Interface DLL
+NVIDIA NVML / NVAPI nvml.dll / nvapi64.dll
+AMD ADL / ADLX atiadlxx.dll
+Intel IGCL ControlLib.dll
+
+DXCore (Windows 10+)
+
+Provides some GPU information including adapter name and memory usage via 
+AdapterMemoryUsageBytes. Temperature support is limited.
+
+---
+
+System Information
+
+General System Information
+
+GetSystemInfo (kernel32.dll)
+
+Processor architecture, page size, minimum/maximum application address, 
+and number of processors.
+
+GetSystemMetrics (user32.dll)
+
+Retrieves system metrics and configuration settings including display 
+dimensions, scroll bar sizes, and system-wide UI metrics.
+
+Index Description
+SM_CXSCREEN Screen width in pixels
+SM_CYSCREEN Screen height in pixels
+SM_CXVIRTUALSCREEN Virtual screen width
+SM_CYVIRTUALSCREEN Virtual screen height
+SM_CMONITORS Number of monitors
+
+---
+
+API Classification
+
+Category Interface Type Primary Use
+CPU GetSystemInfo Win32 API Static hardware info
+CPU Win32_PerfFormattedData_Counters_ThermalZoneInformation WMI Temperature (limited)
+Memory GlobalMemoryStatusEx Win32 API RAM usage status
+Memory GetPerformanceInfo Win32 API Performance metrics
+Memory Win32_PerfFormattedData_PerfOS_Memory WMI Memory counters
+Disk GetDiskFreeSpaceEx Win32 API Disk space info
+Disk Win32_PerfFormattedData_PerfDisk_PhysicalDisk WMI Disk I/O counters
+Network GetAdaptersInfo Win32 API Adapter configuration
+Network Win32_PerfRawData_Tcpip_NetworkInterface WMI Network throughput
+GPU Win32_VideoController WMI Basic GPU info only
+GPU NVML/ADLX/IGCL Vendor SDK Temperature, utilization, VRAM
+System GetSystemMetrics Win32 API Display/system metrics
+
+---
+
+Notes
+
+· WMI performance counter classes are accessed via the root\cimv2 namespace.
+· PDH (Performance Data Helper) provides programmatic access to the same 
+  counters visible in Perfmon.
+· Raw vs Formatted: Win32_PerfRawData_* classes provide raw counter values 
+  requiring calculation; Win32_PerfFormattedData_* classes provide 
+  pre-calculated values.
+· GPU temperature and detailed VRAM usage are not available through standard 
+  Windows APIs and require vendor-specific SDKs.
+· CPU temperature via WMI may not be populated on all hardware and often 
+  requires administrator privileges.

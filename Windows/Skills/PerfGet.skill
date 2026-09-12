@@ -1,0 +1,43 @@
+# User‑Mode Hardware Telemetry (Windows, C#)
+
+## CPU Utilization (floating‑point)
+- API: **PDH** (`pdh.dll`) via PInvoke — `PdhOpenQuery`, `PdhAddCounter`, `PdhCollectQueryData`, `PdhGetFormattedCounterValue(PDH_FMT_DOUBLE)`
+- Counters:
+  - `\Processor(_Total)\% Processor Time`
+  - `\Process(<process_name>)\% Processor Time`
+- Notes:
+  - Same data source as Task Manager.
+  - Maintain a long‑lived query; sample twice with a ≥1 s interval and compute the delta.
+  - Output is `double` (100 ns timer).
+  - For per‑process percentage matching Task Manager’s “logical processor %”, divide by `Environment.ProcessorCount`.
+- Avoid: `System.Diagnostics.PerformanceCounter.NextValue()` (GC/churn), `GetSystemTimes` (manual math, error‑prone), WMI `Win32_Processor.LoadPercentage` (integer, slow, unreliable).
+
+## Handle Count
+- Current process: `Process.GetCurrentProcess().HandleCount` **or** `GetProcessHandleCount` (kernel32 PInvoke).
+- Other processes / all processes: `NtQuerySystemInformation(SystemProcessInformation)` (PInvoke, user‑mode, no driver).
+- Instantaneous count; no sampling window or delta required.
+- Avoid WMI.
+
+## Core Temperature
+- Primary: **LibreHardwareMonitor** (`LibreHardwareMonitorLib`) — user‑mode, optional Ring0 driver (can run without loading the kernel service).
+  - Poll `IHardware.Sensors` every 500 ms–1 s.
+  - Provides per‑core and package temperatures for Intel/AMD.
+  - Distribute native DLL matching architecture (x86/x64).
+- Fallback: WMI `MSAcpi_ThermalZoneTemperature` (unit: 0.1 K). Available only on some laptops/OEM systems; often empty on desktops. Do not use as primary source.
+- No official Windows user‑mode API exposes raw core temperatures.
+
+## Architecture
+- Single timer / background loop (≈1 s cadence):
+  - PDH query → system CPU%, process CPU% (`double`)
+  - Handle count (self or all processes)
+  - LibreHardwareMonitor update → core temperatures (graceful degradation if init fails)
+- Keep all values as `double` / `long`; avoid `float` or integer division.
+- First PDH sample discarded (baseline).
+- WMI excluded from hot path; used only as static fallback.
+
+## Priority Order
+| Metric | Best | Good | Avoid |
+|--------|------|------|-------|
+| CPU% | PDH PInvoke (`double`) | `PerformanceCounter` class | WMI |
+| Handle Count | `Process.HandleCount` / `NtQuerySystemInformation` | — | WMI |
+| Core Temp | LibreHardwareMonitor (no driver) | `MSAcpi_ThermalZoneTemperature` (WMI) | None reliable |

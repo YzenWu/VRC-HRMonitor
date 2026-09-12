@@ -1,0 +1,250 @@
+---
+name: vrchat-local-storage-and-config
+description: Resolve VRChat local storage layout on Windows/Linux/Quest — output logs, trace/debug logs, crash dumps, asset cache, screenshots, and config.json precedence. Use when building tooling that reads VRChat logs/cache, troubleshooting crashes, migrating cache to another drive, or generating paths/parsers from config.json.
+---
+
+# VRChat Local Storage, Logs, Crash Dumps, Cache & config.json
+
+Agent guidance: **Always resolve paths from `config.json` first, then fall back to defaults.**
+Do not hardcode `C:\Users\...\AppData\LocalLow\VRChat\VRChat` without checking config.
+
+---
+
+## 1. config.json precedence rules
+
+Location:
+- Windows: `%LOCALAPPDATA%\..\LocalLow\VRChat\VRChat\config.json`
+  (expands to `C:\Users\<user>\AppData\LocalLow\VRChat\VRChat\config.json`)
+- VRChat does **not** create this file; user/tooling must create it.
+- Quest: config.json is **not** supported.
+- JSON path strings: use `/` or `\\`, never single `\`.
+
+Relevant keys:
+
+json
+
+{
+
+"cache_directory": "D:/VRCCache",
+
+"cache_size": 40,
+
+"cache_expiry_delay": 30,
+
+"picture_output_folder": "D:/Pictures/VRChat",
+
+"picture_output_split_by_date": true
+
+}
+
+
+Precedence:
+1. If `cache_directory` exists and path is valid → cache goes there.
+2. Else → default LocalLow cache folder.
+3. `config.json` and logs/output logs **always stay** in default LocalLow folder even if cache is relocated.
+4. `picture_output_folder` overrides `%USERPROFILE%\Pictures\VRChat`.
+5. `picture_output_split_by_date: true` → `YYYY-MM` subfolders (VRChat default).
+6. `cache_size` minimum 30 GB; `cache_expiry_delay` minimum 30 days.
+
+---
+
+## 2. Default Windows layout
+
+Base:
+
+C:\Users<User>\AppData\LocalLow\VRChat\VRChat\
+
+├── config.json
+
+├── output_log_YYYY-MM-DD_HH-mm-ss.txt
+
+├── Cache-WindowsPlayer\
+
+│   └── <hashed asset files / folders>
+
+├── Avatars\
+
+│   └── <local Build & Test avatar bundles>
+
+├── Logs\                # sometimes present; debug/trace extras
+
+├── CrashReports\        # Unity/player crash artifacts if generated locally
+
+└── ...
+
+
+Screenshots:
+- Default: `%USERPROFILE%\Pictures\VRChat`
+- If `picture_output_split_by_date`: `%USERPROFILE%\Pictures\VRChat\2026-09\`
+- VRCX/photo metadata: PNG iTXt `XML:com.adobe.xmp` + `Description`
+
+---
+
+## 3. Output logs / trace / debug logs
+
+### Output log
+- File: `output_log_YYYY-MM-DD_HH-mm-ss.txt`
+- One file per launcher session; timestamp = session start.
+- Retention: logs older than 24h are deleted on next VRChat launch.
+- Contents: Unity player log, device specs, join/load events, Udon `Debug.Log`, SDK warnings, API errors.
+- Enable deeper logging:
+
+VRChat.exe --no-vr --enable-debug-gui --enable-sdk-log-levels --enable-udon-debug-logging
+
+
+### Trace / verbose
+- VRChat does not ship a separate “trace.log” by default.
+- “Trace” = filtered/output from output_log with SDK + Udon debug flags, or Creator Companion / VRC Quick Launcher debug modes.
+- In-client overlay: `RightShift + Backtick + 3`.
+
+### Log parsing targets
+- world join: `Joining wrld_...`
+- instance: `Instance: ...`
+- avatar load: `Loading Avatar`, `usr_...`
+- errors: `Exception:`, `UnityEngine.Debug`, `Udon`, `SDK`
+- photo save: `Saved screenshot`, `Photo saved`
+
+---
+
+## 4. Crash dumps
+
+Locations to check:
+1. `%LOCALAPPDATA%\..\LocalLow\VRChat\VRChat\CrashReports\`
+2. `C:\Users\<User>\AppData\Local\Temp\VRChat\VRChat\`
+3. `C:\Users\<User>\AppData\Local\CrashDumps\` (system Windows Error Reporting dumps, filename contains `VRChat.exe`)
+4. Steam install dir occasionally: `...\steamapps\common\VRChat\` old Unity crash logs
+
+Formats:
+- `.txt` crash log
+- `.dmp` / minidump
+- Unity `error.log` / `Player.log` style artifacts
+- Do **not** share logs publicly: may contain username, IP, hardware, tokens.
+
+---
+
+## 5. Cache storage format
+
+Default cache root:
+
+%LOCALAPPDATA%..\LocalLow\VRChat\VRChat\Cache-WindowsPlayer\
+
+
+Characteristics:
+- Stores downloaded worlds, avatars, textures, audio, video thumbnails, bundle assets.
+- Mostly Unity `CachedAssetBundle` / hash-named files; not human-readable.
+- LRU by last-access time.
+- Default max size: 30 GB.
+- Files untouched for 30 days are evicted.
+- Safe to delete while VRChat is closed → forces re-download, fixes corrupt avatar/world loads.
+
+If `cache_directory` set:
+- Only cache moves.
+- `config.json`, `output_log_*`, `Avatars\`, crash reports remain in LocalLow.
+
+---
+
+## 6. Cross-platform paths
+
+Linux / Proton:
+
+~/.local/share/Steam/steamapps/compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat/
+
+Flatpak Steam:
+
+~/.var/app/<steam-flatpak-id>/.../compatdata/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat/
+
+
+Quest:
+- No config.json.
+- Logs: device `Documents/Logs`
+- Debug mode: Quick Menu → Settings → Debug → Full / Errors Only / Off
+
+---
+
+## 7. Agent project-building checklist
+
+When building a VRChat log/cache/screenshot tool:
+
+1. Resolve base dir:
+   - read `%LOCALAPPDATA%\..\LocalLow\VRChat\VRChat\config.json`
+2. Compute:
+   - `log_dir = LocalLow/VRChat/VRChat`
+   - `cache_dir = config.cache_directory or LocalLow/VRChat/VRChat/Cache-WindowsPlayer`
+   - `photo_dir = config.picture_output_folder or %USERPROFILE%/Pictures/VRChat`
+3. Enumerate:
+   - `output_log_*.txt`
+   - `Cache-WindowsPlayer/**`
+   - `Pictures/VRChat/**/*.png`
+4. Parse logs with regex; never assume single log file.
+5. Expand env vars: `%LOCALAPPDATA%`, `%USERPROFILE%`, `%APPDATA%`
+6. Normalize JSON paths: replace `\` issues, support `/` and `\\`
+7. Treat crash dumps as sensitive.
+8. If cache relocated, do NOT search default cache for assets.
+
+---
+
+## 8. Path-resolution pseudocode
+
+python
+
+import os, json, glob
+
+def vrchat_paths():
+
+local_low = os.path.expandvars(
+
+os.path.join("%LOCALAPPDATA%", "..", "LocalLow", "VRChat", "VRChat")
+
+)
+
+local_low = os.path.abspath(local_low)
+
+cfg_path = os.path.join(local_low, "config.json")
+
+cfg = {}
+if os.path.exists(cfg_path):
+    with open(cfg_path, encoding="utf-8") as f:
+        cfg = json.load(f)
+
+cache_dir = cfg.get("cache_directory")
+cache_dir = os.path.abspath(os.path.expandvars(cache_dir)) if cache_dir else os.path.join(local_low, "Cache-WindowsPlayer")
+
+photo_dir = cfg.get("picture_output_folder")
+photo_dir = os.path.abspath(os.path.expandvars(photo_dir)) if photo_dir else os.path.expandvars("%USERPROFILE%/Pictures/VRChat")
+
+split_date = cfg.get("picture_output_split_by_date", True)
+
+return {
+    "base": local_low,
+    "config": cfg_path,
+    "logs": local_low,
+    "cache": cache_dir,
+    "photos": photo_dir,
+    "split_photos_by_date": split_date,
+    "avatars_local": os.path.join(local_low, "Avatars"),
+    "crash_dirs": [
+        os.path.join(local_low, "CrashReports"),
+        os.path.expandvars("%LOCALAPPDATA%/../Local/Temp/VRChat/VRChat"),
+        os.path.expandvars("%LOCALAPPDATA%/../Local/CrashDumps"),
+    ],
+}
+
+
+---
+
+## 9. Output contract for agents
+
+When asked “where are my VRChat logs/cache/photos”:
+- Reply with resolved absolute paths from config.json
+- Mark which are default vs user-overridden
+- Warn about sensitive data in logs/crashes
+- Never instruct user to delete `config.json` unless resetting config
+- Cache delete = safe-only-when-closed; logs delete = low risk; crash dumps = keep for support
+
+---
+
+Sources:
+- VRChat Configuration File docs 
+- VRChat Local Storage docs 
+- VRChat Output Logs & Crash Dumps docs 
+- VRChat Udon debugging / output log docs
