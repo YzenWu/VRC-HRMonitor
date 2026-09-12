@@ -1,0 +1,13 @@
+{
+  "name": "hrm-electron-shell",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HRM Web UI Electron shell（VRCX-style 备选壳，Phase A4；主壳为 Shells/WebView2Host）",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^40.4.1"
+  }
+}

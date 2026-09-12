@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Primary HRM Release UI shell: embedded WebView2 loads the local backend Web UI (Phase A3). -->
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>hrm-webui</AssemblyName>
+    <RootNamespace>WebView2Host</RootNamespace>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- Version comes from Release.json via build.ps1 (-p:Version); no per-project source of truth. -->
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- P0: embed the repo Release.json (icons + release metadata); the product no longer ships the file. -->
+    <EmbeddedResource Include="..\..\Release.json" Link="Release.json">
+      <LogicalName>hrm-webui.Release.json</LogicalName>
+    </EmbeddedResource>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(ReleaseBuildTimeUtc)' != ''">
+      <_Parameter1>ReleaseBuildTimeUtc</_Parameter1>
+      <_Parameter2>$(ReleaseBuildTimeUtc)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- P2: shared version-json probe source linked into all four executables. -->
+    <Compile Include="..\..\VersionJson.cs" Link="VersionJson.cs" />
+  </ItemGroup>
+</Project>

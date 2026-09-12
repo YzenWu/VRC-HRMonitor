@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Standalone crash watchdog for the main engine. On an abnormal exit (exit code != 0),
+         broadcast hrm-engine-crash to the hrm-webui main window when the frontend is alive;
+         if both frontend and backend are gone, write a log to %TEMP%\HeartRateMonitor-crash. -->
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>hrmdump</AssemblyName>
+    <RootNamespace>HrmDump</RootNamespace>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- Version comes from Release.json via build.ps1 (-p:Version); no per-project source of truth. -->
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(ReleaseBuildTimeUtc)' != ''">
+      <_Parameter1>ReleaseBuildTimeUtc</_Parameter1>
+      <_Parameter2>$(ReleaseBuildTimeUtc)</_Parameter2>
+    </AssemblyAttribute>
+    <!-- P2: shared version-json probe source linked into all four executables. -->
+    <Compile Include="..\..\VersionJson.cs" Link="VersionJson.cs" />
+  </ItemGroup>
+</Project>

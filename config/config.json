@@ -1,0 +1,93 @@
+{
+  "app": {
+    "debug": 0
+  },
+  "osc": {
+    "ip": "127.0.0.1",
+    "port": "9000",
+    "address": "/chatbox/input",
+    "interval_ms": "1000",
+    "receive_port": "9001",
+    "auto_start": false,
+    "template": "HeartBeat {BPM0} BPM\nCPU: {CPU_PRODUCT_NAME} {CPU_USAGE}%\nGPU: {GPU_PRODUCT_NAME0}\nVRAM: {VRAM_USED0} of {VRAM_TOTAL0}\nRAM: {RAM_USED} / {RAM_TOTAL}\nFocus: {FOCUS_WINDOW_TITLE}"
+  },
+  "heart_rate": {
+    "devices": [],
+    "blocked": [],
+    "display_source": "平均",
+    "window": {
+      "visible": false,
+      "locked": false,
+      "geometry": "200x80+100+100",
+      "unlocked_color": "#00FF00",
+      "locked_color": "#FF6600",
+      "format": "❤️{bpm}",
+      "image_path": null,
+      "source": "平均",
+      "refresh_ms": 200,
+      "sources": {}
+    }
+  },
+  "webhook": {
+    "enabled": false
+  },
+  "logs": {
+    "auto_dump_enabled": true,
+    "auto_dump_interval_min": "30",
+    "dump_dir": "logs/auto"
+  },
+  "web": {
+    "port": 9460,
+    "open_browser": true
+  },
+  "remote": {
+    "enabled": false,
+    "host": "0.0.0.0",
+    "port": 9461,
+    "loopback_only": true,
+    "idle_minutes": 240
+  },
+  "ui": {
+    "theme": "dark",
+    "brand": ""
+  },
+  "devices": {
+    "continuous_scan": true,
+    "refresh_throttle_ms": 400,
+    "aliases": {},
+    "auto_reconnect": true,
+    "reconnect_interval_sec": 15,
+    "reconnect_give_up_min": 30,
+    "rssi_weak_threshold": 100,
+    "history": []
+  },
+  "health": {
+    "resting_bpm": 0,
+    "resting_sd": 0,
+    "calibrated_at": "",
+    "sleep_factor": 0.88,
+    "active_factor": 1.15,
+    "excited_factor": 1.4,
+    "spike_delta": 25,
+    "record": true
+  },
+  "hw": {
+    "interval_ms": 1000,
+    "use_float": true,
+    "decimals": 1,
+    "round": true,
+    "ntp_server": "pool.ntp.org",
+    "units": {},
+    "overrides": {},
+    "renames": {},
+    "custom": []
+  },
+  "api": {
+    "enabled": true,
+    "token": "",
+    "push_sys_info": false,
+    "push_interval_ms": 2000,
+    "sys_info_vars": [],
+    "webhook_throttle_ms": 1000
+  }
+}
