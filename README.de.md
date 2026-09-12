@@ -4,10 +4,7 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | [粵語（香港）](README.yue-HK.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md) | **Deutsch** | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: Hier Release-/Lizenz-/Plattform-Badges (shields.io) einfügen -->
-
-![Hauptfenster-Übersicht](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: Übersicht des Hauptfensters — Seitenleiste, Pulsseite, Geräte-Pills in der Statusleiste -->
+<img src="images/hero.png" alt="Hauptfenster-Übersicht">
 
 ## Funktionen
 
@@ -18,8 +15,7 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 - Intelligente Gerätebewertung und -sortierung, Aliasnamen, automatische Wiederverbindung, Warnungen bei schwachem Signal (RSSI) und ein eigenes schwebendes Fenster pro Gerät.
 - Autoerkennung: verbindet Kandidatengeräte gewichtsbasiert in Serie und überspringt Audio-/Smart-Home-Geräte sowie Geräte ohne Herzfrequenz-Characteristic.
 
-![Pulskurve](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: Pulsseite — große BPM-Anzeige, Live-Kurve (Haupt/Durchschnitt/pro Gerät), Geräteliste -->
+<img src="images/hrcurve.png" alt="Pulskurve">
 
 ### VRChat-OSC-ChatBox-Versand mit Live-Vorschau
 
@@ -27,8 +23,7 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 - Live-Vorschau der Vorlage, die beim Bearbeiten jede Sekunde aktualisiert wird — mit Zeichenzähler und nicht blockierendem Hinweis nahe dem 144-Zeichen-Limit der ChatBox.
 - Benutzerdefinierter OSC-Versand (beliebige Adresse/Text), ausgehende Webhook-Pushes, OSC-Empfänger (Port 9001) zum Mitschneiden des Avatar-Parameter-Traffic von VRChat sowie die Option „Beim Start sofort senden“.
 
-![Versand-Vorschau](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: Pusher-Seite — OSC-Vorlageneditor mit Live-Vorschau und Zeichenzähler -->
+<img src="images/pusher.png" alt="Versand-Vorschau">
 
 ### Schwebende Fenster
 
@@ -36,8 +31,7 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 - Sperrbar mit Klick-Durchreichen, DPI-bewusster Größenänderung und unabhängig gespeicherter Fenstergeometrie.
 - Datenquelle (Durchschnitt oder bestimmtes Gerät) und Aktualisierungsintervall sind pro Fenster einstellbar.
 
-![Schwebendes Fenster](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: schwebende Fenster über einem Spiel/Desktop — Hauptfenster und Gerätefenster -->
+<img src="images/overlay.png" alt="Schwebendes Fenster" width="500">
 
 ### Hardware-Telemetrie-Variablen
 
@@ -62,9 +56,6 @@ Echtzeit-BLE-Herzfrequenz für VRChat: Überträgt Puls und Hardware-Telemetrie 
 - Zugriffsstufen nach Quelle: Loopback-Verbindungen sind der lokale Administrator (ohne Anmeldung); LAN-Quellen erfordern den Remote-Schalter und ein lokales Konto; öffentliche/WAN-Quellen zusätzlich den WAN-Schalter — dieser verlangt ein starkes Admin-Passwort und einen ausdrücklichen Risikobestätigungsdialog.
 - Rollen (Admin/Benutzer) mit Whitelists pro Bereich, PBKDF2-Passwortspeicherung, UA-gebundene Sitzungen mit Leerlauf-Ablauf, Audit-Protokoll und optionales HTTPS per Zertifikats-Fingerprint.
 
-![Remote am Smartphone](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: Remote-Web-Frontend auf einem Smartphone — mobiles Layout mit der Pulsseite -->
-
 ### CLI / TUI
 
 - `hrmcli.exe` (identisch mit `HeartRateMonitor.exe --cli`): Einmalbefehle für Skripte, ein einfaches REPL (`--shell`) und standardmäßig ein TestDisk-artiges Menü-TUI.
@@ -81,8 +72,7 @@ Ein Dock unten links in der Seitenleiste öffnet das VRChat-Toolkit:
 - **Spiel-Statistiken** — aggregierte Spielzeit-/Puls-/Hardware-Statistiken mit Diagrammen.
 - **Prozessanalyse** — CPU-/Speicher-Snapshots des VRChat-Prozesses.
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit-Seite — geöffnetes Dock-Menü und das Cache-Analysewerkzeug -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### Abgesicherter Modus
 
@@ -123,8 +113,6 @@ Voraussetzungen:
 Build vom Repository-Stammverzeichnis (PowerShell):
 
 ```powershell
-./build.ps1                # interaktiv: standalone / releases / debug
-./build.ps1 --standalone   # eigenständig, Single-File-Programme
 ./build.ps1 --releases     # frameworkabhängiges Release + ZIP
 ./build.ps1 --debug        # Debug-Build mit Konsole und ausführlichen Logs
 ```
@@ -133,4 +121,10 @@ Das Skript baut nacheinander die C-Engine, das Web-Frontend (Vite) und die vier 
 
 ## Lizenz
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**Der Großteil des Projektinhalts wurde von ChatGPT und Claude Opus generiert. Bei Fragen oder Vorschlägen bitte ein Issue im Repository öffnen oder einen PR einreichen.**

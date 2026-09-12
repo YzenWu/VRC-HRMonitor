@@ -4,10 +4,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | [粵語（香港）](README.yue-HK.md) | [日本語](README.ja.md) | [Español](README.es.md) | **한국어** | [Deutsch](README.de.md) | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: 여기에 release / license / platform 배지(shields.io)를 삽입 -->
-
-![메인 화면 개요](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: 메인 윈도우 개요 — 사이드바, 심박 페이지, 하단 바의 기기 필 -->
+<img src="images/hero.png" alt="메인 화면 개요">
 
 ## 기능
 
@@ -18,8 +15,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - 스마트 기기 점수 산정·정렬, 별명, 자동 재연결, 약신호(RSSI) 경고, 기기별 플로팅 창.
 - 자동 감지: 가중치에 따라 후보 기기를 일괄 연결하며, 오디오/스마트홈 기기와 심박 특성이 없는 기기는 자동으로 건너뜁니다.
 
-![심박 곡선](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: 심박 페이지 — 큰 BPM 표시, 실시간 곡선(메인/평균/기기별), 기기 목록 -->
+<img src="images/hrcurve.png" alt="심박 곡선">
 
 ### VRChat OSC 채팅박스 푸시 및 실시간 미리보기
 
@@ -27,8 +23,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - 편집 중 매초 갱신되는 템플릿 실시간 미리보기와 글자 수 카운터, 채팅박스 144자 제한에 가까워지면 차단 없이 경고만 표시합니다.
 - 사용자 지정 OSC 전송(임의 주소/텍스트), Webhook 아웃바운드 푸시, OSC 수신(9001 포트)으로 VRChat 아바타 파라미터 트래픽 캡처, 「시작 시 자동 푸시」 옵션.
 
-![푸시 미리보기](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: 푸시 페이지 — 실시간 미리보기와 글자 수 카운터가 있는 OSC 템플릿 편집기 -->
+<img src="images/pusher.png" alt="푸시 미리보기">
 
 ### 플로팅 창
 
@@ -36,8 +31,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - 클릭 투과 가능한 잠금, DPI 인식 크기 조절, 창별 위치·크기 독립 저장.
 - 창마다 데이터 소스(평균 또는 특정 기기)와 갱신 간격을 설정할 수 있습니다.
 
-![플로팅 창](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: 게임/데스크톱 위에 떠 있는 플로팅 창 — 메인 창과 기기별 창 -->
+<img src="images/overlay.png" alt="플로팅 창" width="500">
 
 ### 하드웨어 텔레메트리 변수
 
@@ -62,9 +56,6 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - 접속 원천 기반 등급 접근: 루프백 연결은 로컬 관리자(로그인 불필요), LAN 원천은 Remote 스위치와 로컬 계정 필요, 공개/WAN 원천은 추가로 WAN 스위치가 필요하며 — 이는 관리자 강력 비밀번호와 명시적인 위험 확인 대화상자를 요구합니다.
 - 역할(admin/user)별 섹션 허용 목록, PBKDF2 비밀번호 저장, UA 묶임 세션과 유휴 만료, 감사 로그, 인증서 지문 기반 선택적 HTTPS.
 
-![원격 휴대폰 화면](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: 휴대폰에서 연 원격 웹 프론트엔드 — 모바일 레이아웃의 심박 페이지 -->
-
 ### CLI / TUI
 
 - `hrmcli.exe`(`HeartRateMonitor.exe --cli`와 완전히 동일): 스크립트용 원샷 명령, 일반 텍스트 REPL(`--shell`), 기본값은 TestDisk 스타일 메뉴 TUI.
@@ -81,8 +72,7 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 - **게임 통계** — 플레이 시간/심박/하드웨어 데이터의 집계 통계와 차트.
 - **프로세스 분석** — VRChat 프로세스의 CPU/메모리 스냅샷.
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit 페이지 — 펼쳐진 독 메뉴와 캐시 분석 도구 -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### 안전 모드
 
@@ -123,8 +113,6 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 저장소 루트에서 빌드(PowerShell):
 
 ```powershell
-./build.ps1                # 대화형 선택: standalone / releases / debug
-./build.ps1 --standalone   # 자체 포함 단일 파일 실행 파일
 ./build.ps1 --releases     # 프레임워크 의존 릴리스 + ZIP
 ./build.ps1 --debug        # 디버그 빌드: 콘솔 + 상세 로그
 ```
@@ -133,4 +121,10 @@ VRChat를 위한 실시간 BLE 심박 도구: OSC로 심박수와 하드웨어 �
 
 ## 라이선스
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**이 프로젝트의 콘텐츠 대부분은 ChatGPT와 Claude Opus가 생성했습니다. 질문이나 제안이 있다면 저장소에서 issue를 열거나 PR을 제출해 주세요.**

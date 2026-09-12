@@ -4,10 +4,7 @@
 
 [English](README.md) | **简体中文** | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | [粵語（香港）](README.yue-HK.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: 在此插入 release / license / platform 徽章（shields.io） -->
-
-![主界面总览](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: 主窗口总览——侧栏、心率页、底栏设备胶囊 -->
+<img src="images/hero.png" alt="主界面总览">
 
 ## 功能特性
 
@@ -18,8 +15,7 @@
 - 智能设备评分排序、别名、自动重连、弱信号（RSSI）告警、按设备独立悬浮窗。
 - 自动检测：按权重批量连接候选设备，自动跳过音频/智能家居设备与无心率特征的设备。
 
-![心率曲线](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: 心率页——大号 BPM 读数、实时曲线（主显示/平均/按设备）、设备列表 -->
+<img src="images/hrcurve.png" alt="心率曲线">
 
 ### VRChat OSC 聊天框推送与实时预览
 
@@ -27,8 +23,7 @@
 - 编辑时每秒刷新的模板实时预览，带字数统计，接近聊天框 144 字上限时提示（不拦截发送）。
 - 自定义 OSC 发送（任意地址/文本）、Webhook 出站推送、OSC 接收（9001 端口）捕获 VRChat Avatar 参数流量、可选「启动即推送」。
 
-![推送预览](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: 推送页——OSC 模板编辑器与实时预览、字数统计 -->
+<img src="images/pusher.png" alt="推送预览">
 
 ### 悬浮窗
 
@@ -36,8 +31,7 @@
 - 可锁定并点击穿透、DPI 感知缩放、每窗几何独立持久化。
 - 每窗数据源（平均或指定设备）与刷新间隔均可配置。
 
-![悬浮窗](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: 悬浮于游戏/桌面上的悬浮窗——主窗与设备窗 -->
+<img src="images/overlay.png" alt="悬浮窗" width="500">
 
 ### 硬件遥测变量
 
@@ -62,9 +56,6 @@
 - 来源分级访问：回环连接即本地管理员（无需登录）；局域网来源需开启远程开关并登录本机账号；公网来源额外需要 WAN 开关——后者要求 admin 强密码与显式风险确认弹窗。
 - 角色（admin/user）按板块白名单授权、PBKDF2 密码存储、绑定 UA 的会话与闲置过期、审计日志，以及基于证书指纹的可选 HTTPS。
 
-![远程手机端](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: 手机上打开的远程 Web 前端——移动端布局的心率页 -->
-
 ### CLI / TUI
 
 - `hrmcli.exe`（与 `HeartRateMonitor.exe --cli` 等价）：供脚本调用的一次性命令、纯文本 REPL（`--shell`）、默认进入 TestDisk 风格菜单 TUI。
@@ -81,8 +72,7 @@
 - **游戏分析**——游戏时长/心率/硬件数据的聚合统计与图表。
 - **进程分析**——VRChat 进程 CPU/内存快照。
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit 页——展开的 dock 菜单与缓存分析工具 -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### 安全模式
 
@@ -123,8 +113,6 @@
 在仓库根目录构建（PowerShell）：
 
 ```powershell
-./build.ps1                # 交互选择：standalone / releases / debug
-./build.ps1 --standalone   # 自包含单文件可执行程序
 ./build.ps1 --releases     # 框架依赖发布 + ZIP
 ./build.ps1 --debug        # Debug 构建：控制台 + 详细日志
 ```
@@ -133,4 +121,10 @@
 
 ## 许可证
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**本项目的大部分内容由 ChatGPT 与 Claude Opus 生成。如有任何问题或建议，请在仓库中提出 issue 或提交 PR。**

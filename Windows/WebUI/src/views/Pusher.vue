@@ -303,7 +303,7 @@ const stats = computed(() => ({
           </div>
           <div>
             <div class="x-muted" style="font-size: 12.5px; margin-bottom: var(--gap-1)">
-              {{ t('common.value') }} · {{ '{变量名}' }}
+              {{ t('common.value') }} · {{ '{Verb}' }}
             </div>
             <textarea
               v-model="form.template"

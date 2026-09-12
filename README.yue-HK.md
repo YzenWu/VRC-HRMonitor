@@ -4,10 +4,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | **粵語（香港）** | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: 喺呢度插入 release / license / platform 徽章（shields.io） -->
-
-![主介面總覽](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: 主視窗總覽——側欄、心率頁、底欄裝置膠囊 -->
+<img src="images/hero.png" alt="主介面總覽">
 
 ## 功能
 
@@ -18,8 +15,7 @@
 - 有智能裝置評分排位、改花名、自動重連、訊號弱（RSSI）會出警告，仲可以每個裝置開獨立懸浮視窗。
 - 自動偵測：按權重逐個連候選裝置，音響/智能家居同冇心率特徵嘅會自動跳過。
 
-![心率曲線](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: 心率頁——大粒 BPM 數字、實時曲線（主顯示/平均/逐個裝置）、裝置列表 -->
+<img src="images/hrcurve.png" alt="心率曲線">
 
 ### VRChat OSC 聊天框推送同實時預覽
 
@@ -27,8 +23,7 @@
 - 改模板嗰陣每秒刷新實時預覽，有字數統計，接近聊天框 144 字上限會提示你（但唔會攔住唔畀你send）。
 - 有自訂 OSC 發送（任意位址/文字）、Webhook 出去推送、OSC 接收（9001 port）睇 VRChat Avatar 參數，仲可以揀「一開就推送」。
 
-![推送預覽](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: 推送頁——OSC 模板編輯器同實時預覽、字數統計 -->
+<img src="images/pusher.png" alt="推送預覽">
 
 ### 懸浮視窗
 
@@ -36,8 +31,7 @@
 - 可以鎖定兼點擊穿透、DPI 感知縮放，每個窗嘅位置大細各自記住。
 - 每個窗揀資料來源（平均或者指定裝置）同刷新間隔，全部任你set。
 
-![懸浮視窗](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: 浮喺遊戲/桌面上面嘅懸浮視窗——主窗同裝置窗 -->
+<img src="images/overlay.png" alt="懸浮視窗" width="500">
 
 ### 硬件遙測變數
 
@@ -62,9 +56,6 @@
 - 來源分級：自己部機連就係本機管理員（唔使登入）；局域網嚟嘅要開遠端掣同登入本機帳號；公網嚟嘅仲要開 WAN 掣——開 WAN 就要求 admin 強密碼，同埋要喺風險確認視窗度明確噉按確認。
 - 角色（admin/user）按區塊白名單授權、密碼用 PBKDF2 儲存、session 綁住 UA 兼有閒置過期、有稽核日誌，仲可以憑證書指紋開 HTTPS。
 
-![遠端手機端](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: 用手機開嘅遠端 Web 前端——手機版面嘅心率頁 -->
-
 ### CLI / TUI
 
 - `hrmcli.exe`（同 `HeartRateMonitor.exe --cli` 一樣）：寫 script 用嘅一次性指令、純文字 REPL（`--shell`）、預設入 TestDisk 噉款嘅選單 TUI。
@@ -81,8 +72,7 @@
 - **遊戲分析**——打機時長/心率/硬件數據夾埋做統計同圖表。
 - **程序分析**——VRChat 個 process 嘅 CPU/記憶體快照。
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit 頁——展開咗嘅 dock 選單同快取分析工具 -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### 安全模式
 
@@ -123,8 +113,6 @@
 喺 repo 根目錄 build（PowerShell）：
 
 ```powershell
-./build.ps1                # 互動揀：standalone / releases / debug
-./build.ps1 --standalone   # 自包含單檔執行檔
 ./build.ps1 --releases     # framework-dependent 發佈 + ZIP
 ./build.ps1 --debug        # Debug 版：有 console 同詳細日誌
 ```
@@ -133,4 +121,10 @@
 
 ## 授權
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**呢個項目嘅大部分內容由 ChatGPT 同 Claude Opus 生成。如果你有任何問題或者建議，請喺個 repo 開 issue 或者提交 PR。**

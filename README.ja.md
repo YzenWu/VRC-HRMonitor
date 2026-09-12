@@ -4,10 +4,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | [粵語（香港）](README.yue-HK.md) | **日本語** | [Español](README.es.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: ここに release / license / platform バッジ（shields.io）を挿入 -->
-
-![メイン画面の概観](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: メインウィンドウ全体——サイドバー、心拍ページ、下部バーのデバイスピル -->
+<img src="images/hero.png" alt="メイン画面の概観">
 
 ## 機能
 
@@ -18,8 +15,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - スマートなデバイスのスコアリングと並び替え、別名、自動再接続、弱信号（RSSI）警告、デバイスごとのフローティングウィンドウ。
 - 自動検出：重み付けに従って候補デバイスを順次接続し、オーディオ / スマートホーム機器や心拍特性を持たないデバイスは自動的にスキップ。
 
-![心拍曲线](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: 心拍ページ——大きい BPM 表示、リアルタイム曲線（メイン / 平均 / デバイス別）、デバイスリスト -->
+<img src="images/hrcurve.png" alt="心拍曲线">
 
 ### VRChat OSC チャットボックス送信とライブプレビュー
 
@@ -27,8 +23,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - 編集中は毎秒更新されるテンプレートのライブプレビュー。文字数カウンタ付きで、チャットボックスの 144 文字上限に近づくと警告（送信はブロックしない）。
 - カスタム OSC 送信（任意アドレス / テキスト）、Webhook 送信、OSC 受信（ポート 9001）による VRChat アバターパラメータの監視、「起動時に自動送信」オプション。
 
-![送信プレビュー](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: 送信ページ——OSC テンプレートエディタとライブプレビュー、文字数カウンタ -->
+<img src="images/pusher.png" alt="送信プレビュー">
 
 ### フローティングウィンドウ
 
@@ -36,8 +31,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - ロックしてクリック透過、DPI 対応のリサイズ、ウィンドウごとの位置・サイズを個別に保存。
 - ウィンドウごとにデータソース（平均または特定デバイス）と更新間隔を設定可能。
 
-![フローティングウィンドウ](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: ゲーム / デスクトップ上に浮くフローティングウィンドウ——メインとデバイス別 -->
+<img src="images/overlay.png" alt="フローティングウィンドウ" width="500">
 
 ### ハードウェアテレメトリ変数
 
@@ -62,9 +56,6 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - 接続元による階層化アクセス：ループバック接続はローカル管理者（ログイン不要）。LAN からの接続はリモートスイッチとローカルアカウントが必要。WAN（外部）からの接続はさらに WAN スイッチが必要——管理者の強力なパスワードと明示的なリスク確認ダイアログが求められる。
 - ロール（admin / user）ごとのセクションホワイトリスト、PBKDF2 パスワード保存、UA 紐付けセッションとアイドルタイムアウト、監査ログ、証明書サムプリントによるオプションの HTTPS。
 
-![リモート（スマートフォン）](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: スマートフォンで開いたリモート Web フロントエンド——モバイルレイアウトの心拍ページ -->
-
 ### CLI / TUI
 
 - `hrmcli.exe`（`HeartRateMonitor.exe --cli` と完全同等）：スクリプト用のワンショットコマンド、プレーン REPL（`--shell`）、デフォルトでは TestDisk 風のメニュー TUI。
@@ -81,8 +72,7 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 - **ゲーム統計**——プレイ時間 / 心拍 / ハードウェアデータの集計統計とグラフ。
 - **プロセス分析**——VRChat プロセスの CPU / メモリスナップショット。
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit ページ——展開したドックメニューとキャッシュ分析ツール -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### セーフモード
 
@@ -123,8 +113,6 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 リポジトリルートでビルド（PowerShell）：
 
 ```powershell
-./build.ps1                # 対話式選択：standalone / releases / debug
-./build.ps1 --standalone   # 自己完結型シングルファイル実行ファイル
 ./build.ps1 --releases     # フレームワーク依存リリース + ZIP
 ./build.ps1 --debug        # デバッグビルド：コンソール + 詳細ログ
 ```
@@ -133,4 +121,10 @@ VRChat 向けリアルタイム BLE 心拍ツール：OSC 経由で心拍数と�
 
 ## ライセンス
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**このプロジェクトの内容の大部分は ChatGPT と Claude Opus によって生成されています。ご質問やご提案がある場合は、リポジトリで issue を作成するか PR を送信してください。**

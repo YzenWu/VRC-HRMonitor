@@ -4,10 +4,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | **繁體中文（香港）** | [粵語（香港）](README.yue-HK.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | [Français](README.fr.md)
 
-<!-- BADGES PLACEHOLDER: 喺度插入 release / license / platform 徽章（shields.io） -->
-
-![主介面總覽](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: 主視窗總覽——側欄、心率頁、底欄裝置膠囊 -->
+<img src="images/hero.png" alt="主介面總覽">
 
 ## 功能特性
 
@@ -18,8 +15,7 @@
 - 智能裝置評分排序、別名、自動重連、弱訊號（RSSI）警示、每個裝置獨立懸浮視窗。
 - 自動偵測：按權重批次連線候選裝置，自動跳過音訊/智能家居裝置同冇心率特徵嘅裝置。
 
-![心率曲線](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: 心率頁——大 BPM 讀數、即時曲線（主顯示/平均/每裝置）、裝置列表 -->
+<img src="images/hrcurve.png" alt="心率曲線">
 
 ### VRChat OSC 聊天框推送同即時預覽
 
@@ -27,8 +23,7 @@
 - 編輯時每秒刷新嘅模板即時預覽，附字數統計，接近聊天框 144 字上限時會提示（唔會攔截傳送）。
 - 自訂 OSC 傳送（任意位址/文字）、Webhook 外送推送、OSC 接收（9001 埠）擷取 VRChat Avatar 參數流量、可揀「啟動即推送」。
 
-![推送預覽](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: 推送頁——OSC 模板編輯器同即時預覽、字數統計 -->
+<img src="images/pusher.png" alt="推送預覽">
 
 ### 懸浮視窗
 
@@ -36,8 +31,7 @@
 - 可鎖定並且點擊穿透、DPI 感知縮放、每窗幾何獨立保存。
 - 每窗資料來源（平均或指定裝置）同刷新間隔都可以設定。
 
-![懸浮視窗](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: 懸浮喺遊戲/桌面上面嘅懸浮視窗——主窗同裝置窗 -->
+<img src="images/overlay.png" alt="懸浮視窗" width="500">
 
 ### 硬件遙測變數
 
@@ -62,9 +56,6 @@
 - 來源分級存取：回環連線就係本機管理員（唔使登入）；區域網絡來源要開遠端掣同登入本機帳號；公網來源額外要 WAN 掣——後者要求 admin 強密碼同明確嘅風險確認對話框。
 - 角色（admin/user）按區塊白名單授權、PBKDF2 密碼儲存、綁定 UA 嘅工作階段同閒置逾時、稽核日誌，仲有基於證書指紋嘅可揀 HTTPS。
 
-![遠端手機端](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: 手機開啟嘅遠端 Web 前端——流動版版面嘅心率頁 -->
-
 ### CLI / TUI
 
 - `hrmcli.exe`（同 `HeartRateMonitor.exe --cli` 等價）：畀 script 用嘅一次性命令、純文字 REPL（`--shell`）、預設入 TestDisk 風格選單 TUI。
@@ -81,8 +72,7 @@
 - **遊戲分析**——遊戲時長/心率/硬件數據嘅匯整統計同圖表。
 - **程序分析**——VRChat 程序 CPU/記憶體快照。
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: Toolkit 頁——展開嘅 dock 選單同快取分析工具 -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### 安全模式
 
@@ -123,8 +113,6 @@
 喺 repository 根目錄建置（PowerShell）：
 
 ```powershell
-./build.ps1                # 互動揀：standalone / releases / debug
-./build.ps1 --standalone   # 自包含單檔執行檔
 ./build.ps1 --releases     # framework-dependent 發佈 + ZIP
 ./build.ps1 --debug        # Debug build：主控台 + 詳細日誌
 ```
@@ -133,4 +121,10 @@ script 會依次建置 C 引擎、Web 前端（vite）同四個 .NET 專案，�
 
 ## 授權條款
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**本專案嘅大部分內容由 ChatGPT 同 Claude Opus 生成。如有任何問題或建議，請喺儲存庫提出 issue 或提交 PR。**

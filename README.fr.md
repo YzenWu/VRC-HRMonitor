@@ -4,10 +4,7 @@ Outil de fréquence cardiaque BLE en temps réel pour VRChat : envoie vos pulsat
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [繁體中文（香港）](README.zh-HK.md) | [粵語（香港）](README.yue-HK.md) | [日本語](README.ja.md) | [Español](README.es.md) | [한국어](README.ko.md) | [Deutsch](README.de.md) | **Français**
 
-<!-- BADGES PLACEHOLDER: insérez ici les badges release / license / platform (shields.io) -->
-
-![Aperçu de la fenêtre principale](docs/images/hero.png)
-<!-- IMAGE PLACEHOLDER: aperçu de la fenêtre principale — barre latérale, page pulsations, pastilles d'appareils dans la barre inférieure -->
+<img src="images/hero.png" alt="Aperçu de la fenêtre principale">
 
 ## Fonctionnalités
 
@@ -18,8 +15,7 @@ Outil de fréquence cardiaque BLE en temps réel pour VRChat : envoie vos pulsat
 - Notation et tri intelligents des appareils, alias, reconnexion automatique, alertes de signal faible (RSSI) et une fenêtre flottante par appareil.
 - Détection automatique : connecte les appareils candidats par ordre de pondération, en ignorant les appareils audio/maison connectée et ceux sans caractéristique de fréquence cardiaque.
 
-![Courbe de pulsations](docs/images/heartbeat.png)
-<!-- IMAGE PLACEHOLDER: page pulsations — grande valeur BPM, courbe en direct (principale / moyenne / par appareil), liste des appareils -->
+<img src="images/hrcurve.png" alt="Courbe de pulsations">
 
 ### Envoi OSC vers la ChatBox VRChat avec aperçu en direct
 
@@ -27,8 +23,7 @@ Outil de fréquence cardiaque BLE en temps réel pour VRChat : envoie vos pulsat
 - Aperçu en direct du modèle rafraîchi chaque seconde pendant l'édition, avec compteur de caractères et avertissement non bloquant à l'approche de la limite de 144 caractères de la ChatBox.
 - Envoi OSC personnalisé (adresse/texte libre), push sortant Webhook, récepteur OSC (port 9001) pour capturer le trafic des paramètres d'avatar VRChat, et option « envoi dès le démarrage ».
 
-![Aperçu du push](docs/images/pusher.png)
-<!-- IMAGE PLACEHOLDER: page push — éditeur de modèle OSC avec aperçu en direct et compteur de caractères -->
+<img src="images/pusher.png" alt="Aperçu du push">
 
 ### Fenêtres flottantes
 
@@ -36,8 +31,7 @@ Outil de fréquence cardiaque BLE en temps réel pour VRChat : envoie vos pulsat
 - Verrouillables avec traversée des clics, redimensionnement sensible à la DPI et géométrie persistée indépendamment pour chaque fenêtre.
 - Source de données (moyenne ou appareil précis) et intervalle de rafraîchissement configurables par fenêtre.
 
-![Fenêtre flottante](docs/images/float-window.png)
-<!-- IMAGE PLACEHOLDER: fenêtres flottantes au-dessus d'un jeu / du bureau — fenêtre principale et fenêtre par appareil -->
+<img src="images/overlay.png" alt="Fenêtre flottante" width="500">
 
 ### Variables de télémétrie matérielle
 
@@ -62,9 +56,6 @@ Outil de fréquence cardiaque BLE en temps réel pour VRChat : envoie vos pulsat
 - Accès à niveaux selon la source : les connexions en boucle locale sont l'administrateur local (sans connexion) ; les sources LAN exigent l'interrupteur Remote et un compte local ; les sources publiques/WAN exigent en plus l'interrupteur WAN — qui réclame un mot de passe admin robuste et une boîte de dialogue explicite de confirmation du risque.
 - Rôles (admin/utilisateur) avec listes blanches par section, stockage des mots de passe en PBKDF2, sessions liées à l'UA avec expiration d'inactivité, journal d'audit et HTTPS optionnel via empreinte de certificat.
 
-![Frontend distant sur mobile](docs/images/remote-mobile.png)
-<!-- IMAGE PLACEHOLDER: frontend web distant ouvert sur un téléphone — mise en page mobile avec la page pulsations -->
-
 ### CLI / TUI
 
 - `hrmcli.exe` (équivalent à `HeartRateMonitor.exe --cli`) : commandes en une passe pour les scripts, REPL en texte brut (`--shell`) et, par défaut, un TUI à menus façon TestDisk.
@@ -81,8 +72,7 @@ Un dock en bas à gauche de la barre latérale ouvre la boîte à outils VRChat 
 - **Statistiques de jeu** — statistiques agrégées de temps de jeu / pulsations / matériel avec graphiques.
 - **Analyse de processus** — instantanés CPU/mémoire du processus VRChat.
 
-![Toolkit](docs/images/toolkit.png)
-<!-- IMAGE PLACEHOLDER: page Toolkit — menu du dock déplié et l'outil d'analyse du cache -->
+<img src="images/toolkit.png" alt="Toolkit" width="400">
 
 ### Mode sans échec
 
@@ -123,8 +113,6 @@ Prérequis :
 Compilation depuis la racine du dépôt (PowerShell) :
 
 ```powershell
-./build.ps1                # interactif : standalone / releases / debug
-./build.ps1 --standalone   # autonome, exécutables monofichiers
 ./build.ps1 --releases     # version dépendante du framework + ZIP
 ./build.ps1 --debug        # build de débogage avec console et journaux détaillés
 ```
@@ -133,4 +121,10 @@ Le script construit le moteur C, puis le frontend web (vite), puis les quatre pr
 
 ## Licence
 
-[MIT](LICENSE) — © Yzen Wu
+[MIT](LICENSE) — © Yzen Wu.
+
+---
+
+## AIGC Context
+  
+**La majeure partie du contenu du projet a été générée par ChatGPT et Claude Opus. Si vous avez des questions ou des suggestions, veuillez ouvrir une issue ou soumettre une PR dans le dépôt.**

@@ -1,4 +1,4 @@
-#   build.ps1 [--standalone | --releases | --debug] [-SkipWeb]
+#   build.ps1 [--releases | --debug] [-SkipWeb]
 #   (no arg -> interactive prompt, pick by number + Enter)
 #
 #   PE icons (resource icons for the engine/webui/cli/dump executables plus the tray icon):
@@ -12,23 +12,16 @@
 #   Built/      Artifacts (repository root, not committed)
 #
 # branches:
-#   standalone : self-contained, no .NET install needed (WinExe, no console)
 #   releases   : framework-dependent release, no console window
 #   debug      : debug config, console window, most detailed logs
-
 param(
     [string]$Mode = "",
     [switch]$SkipWeb
 )
-
-# Support both --standalone and -Mode standalone syntax
 $Mode = $Mode.TrimStart('-')
-
 $ErrorActionPreference = "Stop"
-
 # Do not add concurrency or mutual-exclusion guards: the build entry point is a critical workflow and must never be blocked (user instruction dated 2026-09-07).
 # Parallel builds share obj/ and may produce incomplete artifacts; callers must avoid running two builds simultaneously.
-
 # #22 moved the focus back to Windows: the script is at the workspace root and all source is under Windows/ (Shared has been merged)
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Win = Join-Path $Root "Windows"
@@ -36,18 +29,15 @@ $Engine = Join-Path $Win "Engine"
 $App    = Join-Path $Win "App"
 $WebUi  = Join-Path $Win "WebUI"
 $OutBase = Join-Path $Root "Built"
-
 # ---------- resolve branch ----------
 if (-not $Mode) {
-    Write-Host "Select build branch (HeartRateMonitor · Windows):"
-    Write-Host "  1) standalone  - self-contained, no-install (no console)"
-    Write-Host "  2) releases    - release, no console window"
-    Write-Host "  3) debug       - debug, console + most detailed logs"
+    Write-Host "Select build branch (HeartRateMonitor4Windows):"
+    Write-Host "  0) releases    - release, no console window"
+    Write-Host "  1) debug       - debug, console + most detailed logs"
     $choice = Read-Host "Enter number and press Enter"
     switch ($choice) {
-        "1" { $Mode = "standalone" }
-        "2" { $Mode = "releases" }
-        "3" { $Mode = "debug" }
+        "0" { $Mode = "releases" }
+        "1" { $Mode = "debug" }
         default {
             Write-Host "Invalid choice, default to releases."
             $Mode = "releases"
@@ -55,15 +45,13 @@ if (-not $Mode) {
     }
 }
 switch ($Mode) {
-    "standalone" {}
     "releases"   {}
     "debug"      {}
     default {
-        Write-Host "Unknown mode '$Mode'. Use --standalone / --releases / --debug"
+        Write-Host "Unknown mode '$Mode'. Use --releases / --debug"
         exit 1
     }
 }
-
 # ---------- 0.5) release manifest (P0: single source of truth - icons, versions, release metadata) ----------
 # Windows/Release.json is the only editing entry: the build validates it, injects the declared versions
 # into all four executables, and embeds it as an assembly resource. The product no longer ships the file,
@@ -74,14 +62,12 @@ $ManifestIcons = @{}          # role -> declared relative path (preserved verbat
 $ManifestIconFiles = @{}      # role -> actual file resolved under the source root (valid only when present)
 $RelComponents = @{}          # component role -> declared version
 $BuildUtc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-
 # Trailing ".0" segments are insignificant when comparing file versions against manifest declarations.
 function Normalize-Version([string]$v) {
     $p = @($v -split '\.' | Where-Object { $_ -ne '' })
     while ($p.Count -gt 2 -and $p[-1] -eq '0') { $p = $p[0..($p.Count - 2)] }
     return ($p -join '.')
 }
-
 if (-not (Test-Path $RelSrc)) {
     Write-Host "!! Windows/Release.json missing: it is the single release-metadata source"
     exit 1
@@ -147,13 +133,11 @@ Write-Host ("==> icons    : engine={0} webui={1} cli={2} dump={3} tray={4}" -f `
     ($IcoApp -ne ""), ($IcoWebui -ne ""), ($IcoCli -ne ""), ($IcoDump -ne ""), ($IcoTray -ne ""))
 # P0: a missing component is a broken release; debug keeps iterating for development.
 $Strict = ($Mode -ne "debug")
-
 $Ts = Get-Date -Format "yyyyMMdd_HHmmss"
 $Out = Join-Path $OutBase "$Mode-$Ts"
 New-Item -ItemType Directory -Path $Out -Force | Out-Null
 Write-Host "==> branch: $Mode"
 Write-Host "==> output: $Out"
-
 # ---------- 1) compile the C OSC engine ----------
 Push-Location $Engine
 Write-Host "==> gcc compile osc_engine.dll ..."
@@ -164,24 +148,17 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 Pop-Location
-
 # ---------- 1b) build the Vue Web frontend ----------
 & (Join-Path $WebUi "build-webui.ps1") -SkipWeb:$SkipWeb
 if ($LASTEXITCODE -ne 0) {
     Write-Host "!! web build failed"
     exit 1
 }
-
 # ---------- 2) dotnet publish ----------
 $Conf = if ($Mode -eq "debug") { "Debug" } else { "Release" }
 $publishArgs = @("publish", $App, "-c", $Conf, "-r", $Rid, "-o", $Out,
                  "-p:DebugType=embedded")
-if ($Mode -eq "standalone") {
-    # Standalone/no-install: bundle the runtime as a single file to reduce directory DLLs
-    $publishArgs += "--self-contained", "true",
-                    "-p:PublishSingleFile=true",
-                    "-p:IncludeNativeLibrariesForSelfExtract=true"
-} elseif ($Mode -eq "releases") {
+if ($Mode -eq "releases") {
     # Release: framework-dependent single file (requires the .NET 10 runtime)
     $publishArgs += "--self-contained", "false", "-p:PublishSingleFile=true"
 } else {
@@ -271,7 +248,6 @@ if (Test-Path $ShellProj) {
     }
 }
 
-# ---------- 3f) build + copy hrmcli (standalone CLI entry point, equivalent to HeartRateMonitor.exe --cli) ----------
 $CliProj = Join-Path $Win "Shells\CliHost\CliHost.csproj"
 if (Test-Path $CliProj) {
     Write-Host "==> dotnet publish hrmcli (CLI entry) ..."
@@ -281,10 +257,7 @@ if (Test-Path $CliProj) {
     $cliArgs = @("publish", $CliProj, "-c", $Conf, "-r", $Rid, "-o", $CliOut,
                  "-p:DebugType=embedded", "-v", "q", "--nologo",
                  "-p:Version=$($RelComponents['cli'])", "-p:ReleaseBuildTimeUtc=$BuildUtc")
-    if ($Mode -eq "standalone") {
-        $cliArgs += "--self-contained", "true", "-p:PublishSingleFile=true",
-                    "-p:IncludeNativeLibrariesForSelfExtract=true"
-    } elseif ($Mode -eq "releases") {
+    if ($Mode -eq "releases") {
         $cliArgs += "--self-contained", "false", "-p:PublishSingleFile=true"
     } else {
         $cliArgs += "--self-contained", "false", "-p:PublishSingleFile=false"
@@ -302,17 +275,13 @@ if (Test-Path $CliProj) {
     }
 }
 
-# ---------- 3g) build + copy hrmdump (standalone crash watchdog: watches the engine PID and notifies the shell or writes to %temp% on abnormal exit) ----------
 $DumpProj = Join-Path $Win "Shells\DumpHost\DumpHost.csproj"
 if (Test-Path $DumpProj) {
     Write-Host "==> dotnet publish hrmdump (crash watchdog) ..."
     $DumpOut = Join-Path $Out "_dump"
     $dumpArgs = @("publish", $DumpProj, "-c", $Conf, "-r", $Rid, "-o", $DumpOut,
                   "-p:DebugType=embedded", "-v", "q", "--nologo")
-    if ($Mode -eq "standalone") {
-        $dumpArgs += "--self-contained", "true", "-p:PublishSingleFile=true",
-                     "-p:IncludeNativeLibrariesForSelfExtract=true"
-    } elseif ($Mode -eq "releases") {
+    if ($Mode -eq "releases") {
         $dumpArgs += "--self-contained", "false", "-p:PublishSingleFile=true"
     } else {
         $dumpArgs += "--self-contained", "false", "-p:PublishSingleFile=false"
