@@ -18,7 +18,7 @@ public sealed class WebServer : IDisposable
 {
     public int Port { get; }
     private readonly AppHub _hub;
-    private readonly HttpListener _listener = new();
+    private HttpListener _listener = new();
     private readonly CancellationTokenSource _cts = new();
     private readonly string _webRoot;
     private readonly List<WebSocket> _clients = new();
@@ -29,6 +29,9 @@ public sealed class WebServer : IDisposable
     private readonly string _scheme;
     /// <summary>P6: true when the single listener bound all interfaces; false means a loopback-only fallback (LAN/WAN sources cannot reach the port).</summary>
     private bool _boundAll;
+    /// <summary>权限拒绝触发回环回退时通知宿主（每进程至多一次）；GUI 宿主据此提供“以管理员身份重启”确认。</summary>
+    public event Action? AccessDeniedFallback;
+    private static int _accessDeniedPrompted;
 
     public WebServer(int port, AppHub hub, RemoteAuth? auth = null, string? scheme = null)
     {
@@ -89,9 +92,10 @@ public sealed class WebServer : IDisposable
                 App.Log.Error($"HTTPS listener failed and HTTP fallback is disabled: {e.Message}. Configure the HTTP.sys binding as administrator: netsh http add sslcert ipport=0.0.0.0:{Port} certhash={NormalizeThumbprint(App.Config.Web.CertificateThumbprint)} appid={{YOUR-APP-GUID}}");
                 return false;
             }
-            // All-interface HTTP bind refused (needs URL ACL). Retry on loopback only; LAN/WAN stay unreachable but the local UI survives.
+            // 全接口 HTTP 绑定失败（通常缺少 URL ACL）后，已关闭的 HttpListener 不能复用；
+            // 创建新实例并回退到回环地址，确保本地 UI 仍可使用，LAN/WAN 暂不可达。
             try { _listener.Close(); } catch { }
-            _listener.Prefixes.Clear();
+            _listener = new HttpListener();
             var prefix = $"{_scheme}://127.0.0.1:{Port}/";
             _listener.Prefixes.Add(prefix);
             try
@@ -105,6 +109,9 @@ public sealed class WebServer : IDisposable
             }
             _boundAll = false;
             App.Log.Warn(LogText.L("log.web.bind_loopback_fallback", e.Message, Port));
+            // 权限拒绝（http.sys 缺 URL ACL，Win32 错误 5）时通知宿主（每进程至多一次）：GUI 弹出“以管理员身份重启”确认。
+            if (IsAccessDenied(e) && Interlocked.CompareExchange(ref _accessDeniedPrompted, 1, 0) == 0)
+                AccessDeniedFallback?.Invoke();
         }
         _started = true;
         _hub.ClientEvent += OnHubEvent;
@@ -116,6 +123,10 @@ public sealed class WebServer : IDisposable
 
     private static string NormalizeThumbprint(string? value)
         => new((value ?? "").Where(Uri.IsHexDigit).Select(char.ToUpperInvariant).ToArray());
+
+    /// <summary>http.sys 注册监听命名空间被拒是否为权限问题（ERROR_ACCESS_DENIED = 5）。</summary>
+    private static bool IsAccessDenied(Exception e)
+        => e is HttpListenerException hle && (hle.ErrorCode == 5 || hle.NativeErrorCode == 5);
 
     private static bool TryFindHttpsCertificate(out StoreLocation location)
     {
