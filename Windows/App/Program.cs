@@ -120,6 +120,7 @@ internal static class Program
         App.WebPort = port;
         var webHost = new Web.WebHost(hub, port, App.Config.Web.OpenBrowser);
         App.Web = webHost;
+        webHost.AccessDeniedFallback += OnWebAccessDenied;
         hub.WebStartHook = () => webHost.Start();
         hub.WebStopHook = () => webHost.Stop();
         hub.WebRunningHook = () => webHost.Running;
@@ -232,6 +233,90 @@ internal static class Program
             Buttons = { confirm, cancel },
         };
         return TaskDialog.ShowDialog(page, TaskDialogStartupLocation.CenterScreen) == confirm;
+    }
+
+    /// <summary>
+    /// Web 监听权限回退：全接口绑定被 http.sys 拒绝（缺少 URL ACL，Win32 错误 5），已回退到回环、本地 UI 仍可用。
+    /// GUI 弹出原生警告对话框，确认后以管理员身份重启引擎；CLI/控制台宿主仅保留回环回退。
+    /// </summary>
+    static void OnWebAccessDenied()
+    {
+        if (!App.GuiHosted) return;
+        try
+        {
+            AppHub.UiInvoke(AskElevatedRestart);
+        }
+        catch
+        {
+            // 启动早期托盘句柄尚未创建（消息循环未起）：直接在调用线程弹窗。
+            try { AskElevatedRestart(); } catch { }
+        }
+    }
+
+    /// <summary>权限拒绝警告确认框；Yes → 以管理员身份重启。</summary>
+    static void AskElevatedRestart()
+    {
+        var yes = new TaskDialogButton("Yes");
+        var no = new TaskDialogButton("No");
+        var page = new TaskDialogPage
+        {
+            Caption = "HeartRateMonitor",
+            Heading = "Looks something wrong, maybe cause permission denied. Do you wanna run as Administrator?",
+            Icon = TaskDialogIcon.Warning,
+            AllowCancel = true,
+            DefaultButton = no,
+            Buttons = { yes, no },
+        };
+        if (TaskDialog.ShowDialog(page, TaskDialogStartupLocation.CenterScreen) != yes) return;
+        ElevateAndRestart();
+    }
+
+    /// <summary>
+    /// 先释放单实例锁再以 UAC 提权重启引擎（携带原参数），避免新实例触发“重复运行”对话框；
+    /// UAC 被取消则拿回单实例锁并继续回环回退。重启成功后走常规退出链。
+    /// </summary>
+    static void ElevateAndRestart()
+    {
+        var exe = Environment.ProcessPath ?? System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+        if (string.IsNullOrEmpty(exe) || !File.Exists(exe))
+        {
+            App.Log.Error(LogText.L("log.shell.reboot_fail", exe ?? "?"));
+            return;
+        }
+        try { App.Config.Save(); } catch { }
+        Core.SingleInstance.Release();
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo(exe)
+            {
+                WorkingDirectory = App.ExeDir,
+                UseShellExecute = true,
+                Verb = "runas",
+                Arguments = string.Join(' ', Environment.GetCommandLineArgs().Skip(1)),
+            };
+            System.Diagnostics.Process.Start(psi);
+            App.Log.Info("Web listener permission denied: relaunched as administrator");
+        }
+        catch (Exception e)
+        {
+            App.Log.Warn($"Web listener permission denied: elevation declined ({e.Message}); staying on the loopback fallback");
+            Core.SingleInstance.TryAcquire();
+            return;
+        }
+        if (Application.MessageLoop)
+        {
+            // 消息循环已在运行：走托盘 OnFormClosed 的完整退出链（含前端关闭广播）。
+            Application.Exit();
+            return;
+        }
+        // 启动早期（消息循环未起）：手动清理后直接退出，由提权实例接管。
+        try { App.Web?.Stop(); } catch { }
+        try { App.Hub?.Stop(); } catch { }
+        try { App.Osc.Stop(); } catch { }
+        try { App.Ble.StopScan(); } catch { }
+        try { App.Ble.DisconnectAll(); } catch { }
+        ProcessInfo.StopCrashWatch();
+        Environment.Exit(0);
     }
 
     /// <summary>Asks how to handle a duplicate launch with a Windows TaskDialog (round 32 #1).</summary>

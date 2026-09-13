@@ -6,10 +6,10 @@
   "author_url": "https://github.com/yzenwu",
   "thumbnail": "image/heart.svg",
 
-  "release_name": "HeartRateMonitor Pre 0.0.1",
-  "release_version": "0.0.1-pre",
+  "release_name": "HeartRateMonitor Pre 0.0.2",
+  "release_version": "0.0.2-pre",
   "release_build_time_utc": "auto",
-  "build_note": "Pre 0.0.1 — first public preview",
+  "build_note": "Pre 0.0.2 — first public preview",
   "build_target": "x64",
   "asset_pattern": "HeartRateMonitor-*-x64.zip",
 
@@ -25,9 +25,9 @@
   },
 
   "components": {
-    "engine": "0.0.1",
-    "webui": "0.0.1",
-    "cli": "0.0.1",
-    "dump": "0.0.1"
+    "engine": "0.0.2",
+    "webui": "0.0.2",
+    "cli": "0.0.2",
+    "dump": "0.0.2"
   }
 }
